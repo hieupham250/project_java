@@ -39,6 +39,33 @@ public class CourseDaoImp implements CourseDao {
         return courses;
     }
 
+    public Course getCourseById(int id) {
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        Course course = null;
+        ResultSet rs = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            cstmt = conn.prepareCall("{call get_course_by_id(?)}");
+            cstmt.setInt(1, id);
+            rs = cstmt.executeQuery();
+            if (rs.next()) {
+                course = new Course(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("duration"),
+                        rs.getString("duration"),
+                        rs.getDate("create_at").toLocalDate()
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return course;
+    }
+
     @Override
     public boolean createCourse(Course course) {
         Connection conn = null;

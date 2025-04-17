@@ -13,4 +13,13 @@ public class CourseValidator {
         }
         return false;
     }
+
+    public static boolean isUpdateNameConflict(String newName, int currentCourseId, List<Course> existingCourses) {
+        for (Course c : existingCourses) {
+            if (c.getName().equalsIgnoreCase(newName.trim()) && c.getId() != currentCourseId) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

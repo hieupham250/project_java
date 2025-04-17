@@ -19,6 +19,11 @@ public class CourseServiceImp implements CourseService {
     }
 
     @Override
+    public Course getCourseById(int id) {
+        return courseDao.getCourseById(id);
+    }
+
+    @Override
     public boolean createCourse(Course course) {
         return courseDao.createCourse(course);
     }
