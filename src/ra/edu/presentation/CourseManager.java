@@ -56,7 +56,14 @@ public class CourseManager {
     }
 
     public static void createCourse(Scanner sc) {
-
+        Course course = new Course();
+        List<Course> existingCourses = courseService.getCourses();
+        course.inputData(sc, existingCourses);
+        if (courseService.createCourse(course)) {
+            System.out.println("\u001B[32mThêm khóa học thành công!\u001B[0m");
+        } else {
+            System.out.println("u001B[31mLỗi khi thêm khóa học.u001B[0m");
+        }
     }
 
     public static void updateCourse(Scanner sc) {}

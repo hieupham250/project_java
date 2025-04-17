@@ -1,9 +1,11 @@
 package ra.edu.business.model;
 
+import ra.edu.validate.CourseValidator;
 import ra.edu.validate.StringRule;
 import ra.edu.validate.Validator;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 public class Course {
@@ -63,8 +65,16 @@ public class Course {
         this.create_at = create_at;
     }
 
-    public void inputData(Scanner sc) {
-        this.name = Validator.validateInputString("Nhập tên khóa học: ", sc, new StringRule(1, 100));
+    public void inputData(Scanner sc, List<Course> existingCourses) {
+        while (true) {
+            String inputName = Validator.validateInputString("Nhập tên khóa học: ", sc, new StringRule(1, 100));
+            if (CourseValidator.isNameExisted(inputName, existingCourses)) {
+                System.out.println("\u001B[31mTên khóa học đã tồn tại. Vui lòng nhập tên khác!\u001B[0m");
+            } else {
+                this.name = inputName;
+                break;
+            }
+        }
         this.duration = Validator.validateInputInteger("Nhập thời lượng (giờ): ", sc);
         this.instructor = Validator.validateInputString("Nhập giảng viên phụ trách: ", sc, new StringRule(1, 100));
     }
