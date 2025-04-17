@@ -72,7 +72,6 @@ public class CourseManager {
 
     public static void updateCourse(Scanner sc) {
         int id = Validator.validateInputInteger("Nhập mã khóa học muốn cập nhât: ", sc);
-        sc.nextLine();
         List<Course> existingCourses = courseService.getCourses();
         Course existingCourse = courseService.getCourseById(id);
         if (existingCourse != null) {
@@ -86,6 +85,7 @@ public class CourseManager {
                 System.out.println("3. Giảng viên phụ trách");
                 System.out.println("4. Thoát");
                 int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
+                sc.nextLine();
                 switch (choice) {
                     case 1:
                         String newName = Validator.validateInputString("Nhập tên khóa học mới: ", sc, new StringRule(1, 100));
@@ -120,6 +120,7 @@ public class CourseManager {
                         break;
                     case 4:
                         isUpdating = false;
+                        break;
                     default:
                         System.out.println("\u001B[31mLựa chọn không hợp lệ!\u001B[0m");
                 }
