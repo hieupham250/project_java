@@ -19,7 +19,7 @@ public class ConnectionDB {
         return conn;
     }
 
-    public static void closeConnection(Connection conn, CallableStatement stmt) {
+    public static void closeConnection(Connection conn, CallableStatement cstmt) {
         if (conn != null) {
             try {
                 conn.close();
@@ -28,9 +28,9 @@ public class ConnectionDB {
             }
         }
 
-        if (stmt != null) {
+        if (cstmt != null) {
             try {
-                stmt.close();
+                cstmt.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

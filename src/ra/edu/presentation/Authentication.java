@@ -2,8 +2,8 @@ package ra.edu.presentation;
 
 import ra.edu.business.model.Admin;
 import ra.edu.business.model.Student;
-import ra.edu.business.service.AuthService;
-import ra.edu.business.service.AuthServiceImp;
+import ra.edu.business.service.auth.AuthService;
+import ra.edu.business.service.auth.AuthServiceImp;
 import ra.edu.validate.StringRule;
 import ra.edu.validate.Validator;
 

@@ -15,15 +15,15 @@ public class AuthDaoImp implements AuthDao {
     @Override
     public Admin loginAdmin(String username, String password) {
         Connection conn = null;
-        CallableStatement stmt = null;
+        CallableStatement cstmt = null;
         Admin admin = null;
         ResultSet rs = null;
         try {
             conn = ConnectionDB.openConnection();
-            stmt = conn.prepareCall("{call login_admin(?,?)}");
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            rs = stmt.executeQuery();
+            cstmt = conn.prepareCall("{call login_admin(?,?)}");
+            cstmt.setString(1, username);
+            cstmt.setString(2, password);
+            rs = cstmt.executeQuery();
             if (rs.next()) {
                 currentUser = new Admin(
                         rs.getInt("id"),
@@ -34,7 +34,7 @@ public class AuthDaoImp implements AuthDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            ConnectionDB.closeConnection(conn, stmt);
+            ConnectionDB.closeConnection(conn, cstmt);
         }
         return (Admin) currentUser;
     }
@@ -42,14 +42,14 @@ public class AuthDaoImp implements AuthDao {
     @Override
     public Student loginStudent(String email, String password) {
         Connection conn = null;
-        CallableStatement stmt = null;
+        CallableStatement cstmt = null;
         ResultSet rs = null;
         try {
             conn = ConnectionDB.openConnection();
-            stmt = conn.prepareCall("{call login_student(?,?)}");
-            stmt.setString(1, email);
-            stmt.setString(2, password);
-            rs = stmt.executeQuery();
+            cstmt = conn.prepareCall("{call login_student(?,?)}");
+            cstmt.setString(1, email);
+            cstmt.setString(2, password);
+            rs = cstmt.executeQuery();
             if (rs.next()) {
                 currentUser = new Student(
                         rs.getInt("id"),
@@ -65,7 +65,7 @@ public class AuthDaoImp implements AuthDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            ConnectionDB.closeConnection(conn, stmt);
+            ConnectionDB.closeConnection(conn, cstmt);
         }
         return (Student) currentUser;
     }

@@ -1,4 +1,4 @@
-package ra.edu.business.service;
+package ra.edu.business.service.auth;
 
 import ra.edu.business.dao.auth.AuthDao;
 import ra.edu.business.dao.auth.AuthDaoImp;
