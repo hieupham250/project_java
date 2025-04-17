@@ -15,10 +15,10 @@ public class MenuLoginUI {
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:
-                    LoginAdminUI.login(sc);
+                    Authentication.loginAdmin(sc);
                     break;
                 case 2:
-                    LoginStudentUI.login(sc);
+                    Authentication.loginStudent(sc);
                     break;
                 case 3:
                     System.out.println("Kết thúc chương trình.");

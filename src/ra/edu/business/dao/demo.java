@@ -1,4 +1,4 @@
 package ra.edu.business.dao;
 
-public class Demo {
+public class demo {
 }
