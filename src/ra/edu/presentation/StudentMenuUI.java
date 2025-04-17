@@ -31,7 +31,7 @@ public class StudentMenuUI {
                     System.out.println("\u001B[32mĐăng xuất thành công!\u001B[0m");
                     return;
                 default:
-                    System.out.println("\u001B[31mLựa chọn không hợp lệ\u001B[0m");
+                    System.out.println("\u001B[31mLựa chọn không hợp lệ!\u001B[0m");
             }
         } while (true);
     }

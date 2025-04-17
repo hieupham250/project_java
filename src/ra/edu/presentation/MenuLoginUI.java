@@ -25,7 +25,7 @@ public class MenuLoginUI {
                     sc.close();
                     System.exit(0);
                 default:
-                    System.out.println("\u001B[31mLựa chọn không hợp lệ\u001B[0m");
+                    System.out.println("\u001B[31mLựa chọn không hợp lệ!\u001B[0m");
             }
         } while(true);
     }

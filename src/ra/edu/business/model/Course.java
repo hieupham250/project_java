@@ -1,6 +1,10 @@
 package ra.edu.business.model;
 
+import ra.edu.validate.StringRule;
+import ra.edu.validate.Validator;
+
 import java.time.LocalDate;
+import java.util.Scanner;
 
 public class Course {
     private int id;
@@ -57,6 +61,12 @@ public class Course {
 
     public void setCreate_at(LocalDate create_at) {
         this.create_at = create_at;
+    }
+
+    public void inputData(Scanner sc) {
+        this.name = Validator.validateInputString("Nhập tên khóa học: ", sc, new StringRule(1, 100));
+        this.duration = Validator.validateInputInteger("Nhập thời lượng (giờ): ", sc);
+        this.instructor = Validator.validateInputString("Nhập giảng viên phụ trách: ", sc, new StringRule(1, 100));
     }
 
     @Override
