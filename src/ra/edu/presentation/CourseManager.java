@@ -13,20 +13,27 @@ import static ra.edu.validate.CourseValidator.isUpdateNameConflict;
 
 public class CourseManager {
     private static final CourseService courseService = new CourseServiceImp();
+    private static final String LINE = "+--------------+--------------------------------+------------+------------------------+--------------+";
+    private static final String HEADER = String.format(
+            "| %-12s | %-30s | %-10s | %-22s | %-12s |",
+            "Mã khóa học", "Tên khóa học", "Thời lượng", "Giảng viên", "Ngày tạo"
+    );
 
     public static void menuCourseManager(Scanner sc) {
         do {
-            System.out.println("1. Hiển thị danh sách khóa học");
-            System.out.println("2. Thêm mới khóa học");
-            System.out.println("3. Chỉnh sửa thông tin khóa học");
-            System.out.println("4. Xóa khóa học");
-            System.out.println("5. Tìm kiếm theo tên");
-            System.out.println("6. Sắp xếp theo tên hoặc id");
-            System.out.println("7. quay về menu chính");
+            System.out.println("==================================");
+            System.out.println(" 1. Hiển thị danh sách khóa học");
+            System.out.println(" 2. Thêm mới khóa học");
+            System.out.println(" 3. Chỉnh sửa thông tin khóa học");
+            System.out.println(" 4. Xóa khóa học");
+            System.out.println(" 5. Tìm kiếm theo tên");
+            System.out.println(" 6. Sắp xếp theo tên hoặc id");
+            System.out.println(" 7. quay về menu chính");
+            System.out.println("==================================");
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:
-                    displayCourses();
+                    displayCourses(sc);
                     break;
                 case 2:
                     createCourse(sc);
@@ -48,16 +55,54 @@ public class CourseManager {
         } while (true);
     }
 
-    public static void displayCourses() {
-        List<Course> courses = courseService.getCourses();
-        if (courses.isEmpty()) {
-            System.out.println("\u001B[31mKhông có khóa học nào!\u001B[0m");
-        } else {
-            for (Course course : courses) {
-                System.out.println(course);
+    public static void displayCourses(Scanner sc) {
+        int page = 1;
+        int pageSize = 5;
+        boolean continuePagination = true;
+        while (continuePagination) {
+            List<Course> courses = courseService.getCoursesByPage(page, pageSize);
+            if (courses.isEmpty()) {
+                System.out.println("\u001B[31mKhông có khóa học nào!\u001B[0m");
+                continuePagination = false;
+            } else {
+                System.out.println("Danh sách khóa học (Trang " + page + "):");
+                System.out.println(LINE);
+                System.out.println(HEADER);
+                System.out.println(LINE);
+                for (Course course : courses) {
+                    System.out.println(course);
+                    System.out.println(LINE);
+                }
+                System.out.println("========= Lựa chọn =========");
+                if (page > 1) {
+                    System.out.println("1. Xem trang trước");
+                }
+                System.out.println("2. Xem trang tiếp theo");
+                System.out.println("3. Quay lại menu");
+                int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
+
+                switch (choice) {
+                    case 1:
+                        if (page > 1) {
+                            page--;
+                        } else {
+                            System.out.println("\u001B[31mĐây là trang đầu tiên!\u001B[0m");
+                        }
+                        break;
+                    case 2:
+                        page++;
+                        break;
+                    case 3:
+                        continuePagination = false;
+                        break;
+                    default:
+                        System.out.println("\u001B[31mLựa chọn không hợp lệ!\u001B[0m");
+                        break;
+                }
             }
         }
     }
+
 
     public static void createCourse(Scanner sc) {
         Course course = new Course();
@@ -76,7 +121,11 @@ public class CourseManager {
         Course existingCourse = courseService.getCourseById(id);
         if (existingCourse != null) {
             System.out.println("Thông tin khóa học hiện tại:");
+            System.out.println(LINE);
+            System.out.println(HEADER);
+            System.out.println(LINE);
             System.out.println(existingCourse);
+            System.out.println(LINE);
             boolean isUpdating = true;
             while (isUpdating) {
                 System.out.println("========= Chọn thông tin muốn cập nhật =========");

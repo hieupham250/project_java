@@ -7,13 +7,13 @@ import java.util.Scanner;
 public class AdminMenuUI {
     public static void displayMenu(Scanner sc) {
         do {
-            System.out.println("========= MENU ADMIN =========");
-            System.out.println("1. Quản lý khóa học");
-            System.out.println("2. Quản lý học viên");
-            System.out.println("3. Quản lý đăng ký học");
-            System.out.println("4. Thống kê học viên theo khóa học");
-            System.out.println("5. Đăng xuất");
-            System.out.println("==============================");
+            System.out.println("============ MENU ADMIN ============");
+            System.out.println(" 1. Quản lý khóa học");
+            System.out.println(" 2. Quản lý học viên");
+            System.out.println(" 3. Quản lý đăng ký học");
+            System.out.println(" 4. Thống kê học viên theo khóa học");
+            System.out.println(" 5. Đăng xuất");
+            System.out.println("====================================");
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:

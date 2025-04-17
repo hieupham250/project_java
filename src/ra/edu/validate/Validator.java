@@ -13,7 +13,7 @@ public class Validator {
             try {
                 return Integer.parseInt(sc.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("\u001B[31mDữ liệu không hợp lệ. Vui lòng nhập lại!\u001B[0m");
+                System.out.println("\u001B[31mDữ liệu không hợp lệ, phải là số nguyên. Vui lòng nhập lại!\u001B[0m");
             } catch (Exception e) {
                 System.out.println("\u001B[31mCó lỗi trong quá trình nhập. Vui lòng nhập lại!\u001B[0m");
             }
@@ -28,7 +28,7 @@ public class Validator {
                 if (stringRule.isValidString(inputString)) {
                     return inputString;
                 } else {
-                    System.out.println("\u001B[31mDữ liệu không hợp lệ. Độ dài chuỗi phải từ " + stringRule.getMinLength() + " đến " + stringRule.getMaxLength() + " ký tự. Vui lòng nhập lại!\u001B[0m");
+                    System.out.println("\u001B[31mDữ liệu không hợp lệ, độ dài chuỗi phải từ " + stringRule.getMinLength() + " đến " + stringRule.getMaxLength() + " ký tự. Vui lòng nhập lại!\u001B[0m");
                 }
             } catch (Exception e) {
                 System.out.println("\u001B[31mCó lỗi trong quá trình nhập. Vui lòng nhập lại!\u001B[0m");

@@ -19,6 +19,11 @@ public class CourseServiceImp implements CourseService {
     }
 
     @Override
+    public List<Course> getCoursesByPage(int page, int pageSize) {
+        return courseDao.getCoursesByPage(page, pageSize);
+    }
+
+    @Override
     public Course getCourseById(int id) {
         return courseDao.getCourseById(id);
     }

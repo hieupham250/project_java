@@ -7,11 +7,11 @@ import java.util.Scanner;
 public class MenuLoginUI {
     public static void displayMenu(Scanner sc) {
         do {
-            System.out.println("========= HỆ THỐNG QUẢN LÝ ĐÀO TẠO =========");
-            System.out.println("1. Đăng nhập với tư cách Quản trị viên");
-            System.out.println("2. Đăng nhập với tư cách Học viên");
-            System.out.println("3. Thoát");
-            System.out.println("============================================");
+            System.out.println("========= HỆ THỐNG QUẢN LÝ ĐÀO TẠO =======");
+            System.out.println(" 1. Đăng nhập với tư cách Quản trị viên");
+            System.out.println(" 2. Đăng nhập với tư cách Học viên");
+            System.out.println(" 3. Thoát");
+            System.out.println("==========================================");
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:

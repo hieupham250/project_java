@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
+import static ra.edu.utils.DateUtils.formatDate;
+
 public class Course {
     private int id;
     private String name;
@@ -82,10 +84,8 @@ public class Course {
     @Override
     public String toString() {
         return String.format(
-                "| %-3s | %-30s | %-8s | %-20s | %-12s |\n" +
-                        "| %-3d | %-30s | %-8d | %-20s | %-12s |",
-                "ID", "Course Name", "Duration", "Instructor", "Create At",
-                id, name, duration, instructor, create_at
+                "| %-12d | %-30s | %-10d | %-22s | %-12s |",
+                id, name, duration, instructor, formatDate(create_at)
         );
     }
 }

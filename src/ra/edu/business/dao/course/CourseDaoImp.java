@@ -39,6 +39,37 @@ public class CourseDaoImp implements CourseDao {
         return courses;
     }
 
+    @Override
+    public List<Course> getCoursesByPage(int page, int pageSize) {
+        List<Course> courses = new ArrayList<Course>();
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            int offset = (page - 1) * pageSize;
+            cstmt = conn.prepareCall("{call get_courses_by_page(?, ?)}");
+            cstmt.setInt(1, pageSize);
+            cstmt.setInt(2, offset);
+            rs = cstmt.executeQuery();
+            while (rs.next()) {
+                Course course = new Course(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("duration"),
+                        rs.getString("instructor"),
+                        rs.getDate("create_at").toLocalDate()
+                );
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return courses;
+    }
+
     public Course getCourseById(int id) {
         Connection conn = null;
         CallableStatement cstmt = null;
