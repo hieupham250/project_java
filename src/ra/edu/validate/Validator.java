@@ -8,10 +8,14 @@ import java.util.regex.Pattern;
 
 public class Validator {
     public static int validateInputInteger(String message, Scanner sc) {
-        System.out.print(message);
         do {
             try {
-                return Integer.parseInt(sc.nextLine());
+                System.out.print(message);
+                int input = Integer.parseInt(sc.nextLine());
+                if (input > 0) {
+                    return input;
+                }
+                System.out.println("\u001B[31mDữ liệu phải lớn hơn 0. Vui lòng nhập lại\u001B[0m");
             } catch (NumberFormatException e) {
                 System.out.println("\u001B[31mDữ liệu không hợp lệ, phải là số nguyên. Vui lòng nhập lại!\u001B[0m");
             } catch (Exception e) {
@@ -21,15 +25,19 @@ public class Validator {
     }
 
     public static String validateInputString(String message, Scanner sc, StringRule stringRule) {
-        System.out.print(message);
         do {
-            String inputString = sc.nextLine();
             try {
-                if (stringRule.isValidString(inputString)) {
-                    return inputString;
-                } else {
-                    System.out.println("\u001B[31mDữ liệu không hợp lệ, độ dài chuỗi phải từ " + stringRule.getMinLength() + " đến " + stringRule.getMaxLength() + " ký tự. Vui lòng nhập lại!\u001B[0m");
+                System.out.print(message);
+                String input = sc.nextLine();
+                if (input.isEmpty()) {
+                    System.out.println("\u001B[31m"+ stringRule.getMessageError() + "\u001B[0m");
+                    continue;
                 }
+                if (!stringRule.isValidString(input)) {
+                    System.out.println("\u001B[31mDữ liệu vượt quá độ dài cho phép. Vui lòng nhập lại!\u001B[0m");
+                    continue;
+                }
+                return input;
             } catch (Exception e) {
                 System.out.println("\u001B[31mCó lỗi trong quá trình nhập. Vui lòng nhập lại!\u001B[0m");
             }

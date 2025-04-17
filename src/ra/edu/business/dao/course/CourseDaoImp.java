@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CourseDaoImp implements CourseDao {
     @Override
-    public List<Course> getCourses() {
+    public List<Course> findAll() {
         List<Course> courses = new ArrayList<Course>();
         Connection conn = null;
         CallableStatement cstmt = null;
@@ -85,7 +85,7 @@ public class CourseDaoImp implements CourseDao {
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getInt("duration"),
-                        rs.getString("duration"),
+                        rs.getString("instructor"),
                         rs.getDate("create_at").toLocalDate()
                 );
             }
@@ -98,7 +98,7 @@ public class CourseDaoImp implements CourseDao {
     }
 
     @Override
-    public boolean createCourse(Course course) {
+    public boolean create(Course course) {
         Connection conn = null;
         CallableStatement cstmt = null;
         try {
@@ -118,7 +118,7 @@ public class CourseDaoImp implements CourseDao {
     }
 
     @Override
-    public boolean updateCourse(Course course) {
+    public boolean update(Course course) {
         Connection conn = null;
         CallableStatement cstmt = null;
         try {
@@ -128,6 +128,24 @@ public class CourseDaoImp implements CourseDao {
             cstmt.setString(2, course.getName());
             cstmt.setInt(3, course.getDuration());
             cstmt.setString(4, course.getInstructor());
+            int result = cstmt.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean delete(Course course) {
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            cstmt = conn.prepareCall("{call delete_course(?)}");
+            cstmt.setInt(1, course.getId());
             int result = cstmt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {

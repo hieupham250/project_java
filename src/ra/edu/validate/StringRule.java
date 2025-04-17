@@ -1,26 +1,26 @@
 package ra.edu.validate;
 
 public class StringRule {
-    private final int minLength;
     private final int maxLength;
+    private String messageError;
 
-    public StringRule(int minLength, int maxLength) {
-        this.minLength = minLength;
+    public StringRule(int maxLength, String messageError) {
         this.maxLength = maxLength;
-    }
-
-    public int getMinLength() {
-        return minLength;
+        this.messageError = messageError;
     }
 
     public int getMaxLength() {
         return maxLength;
     }
 
+    public String getMessageError() {
+        return messageError;
+    }
+
     public boolean isValidString(String value) {
         if (value == null) {
             return false;
         }
-        return value.length() >= this.minLength && value.length() <= this.maxLength;
+        return value.length() <= this.maxLength;
     }
 }

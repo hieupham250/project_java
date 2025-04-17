@@ -59,17 +59,17 @@ public class Course {
         this.instructor = instructor;
     }
 
-    public LocalDate getCreate_at() {
+    public LocalDate getCreateAt() {
         return create_at;
     }
 
-    public void setCreate_at(LocalDate create_at) {
+    public void setCreateAt(LocalDate create_at) {
         this.create_at = create_at;
     }
 
     public void inputData(Scanner sc, List<Course> existingCourses) {
         while (true) {
-            String inputName = Validator.validateInputString("Nhập tên khóa học: ", sc, new StringRule(1, 100));
+            String inputName = Validator.validateInputString("Nhập tên khóa học: ", sc, new StringRule(100, "Tên khóa học không được để trống!"));
             if (CourseValidator.isNameExisted(inputName, existingCourses)) {
                 System.out.println("\u001B[31mTên khóa học đã tồn tại. Vui lòng nhập tên khác!\u001B[0m");
             } else {
@@ -78,14 +78,6 @@ public class Course {
             }
         }
         this.duration = Validator.validateInputInteger("Nhập thời lượng (giờ): ", sc);
-        this.instructor = Validator.validateInputString("Nhập giảng viên phụ trách: ", sc, new StringRule(1, 100));
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "| %-12d | %-30s | %-10d | %-22s | %-12s |",
-                id, name, duration, instructor, formatDate(create_at)
-        );
+        this.instructor = Validator.validateInputString("Nhập giảng viên phụ trách: ", sc, new StringRule(100, "Tên giảng viên không được để trống!"));
     }
 }

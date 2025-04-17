@@ -14,8 +14,8 @@ public class CourseServiceImp implements CourseService {
     }
 
     @Override
-    public List<Course> getCourses() {
-        return courseDao.getCourses();
+    public List<Course> findAll() {
+        return courseDao.findAll();
     }
 
     @Override
@@ -29,12 +29,18 @@ public class CourseServiceImp implements CourseService {
     }
 
     @Override
-    public boolean createCourse(Course course) {
-        return courseDao.createCourse(course);
+    public boolean create(Course course) {
+        return courseDao.create(course);
     }
 
     @Override
-    public boolean updateCourse(Course course) {
-        return courseDao.updateCourse(course);
+    public boolean update(Course course) {
+        return courseDao.update(course);
     }
+
+    @Override
+    public boolean delete(Course course) {
+        return courseDao.delete(course);
+    }
+
 }

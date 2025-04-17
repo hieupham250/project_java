@@ -1,13 +1,15 @@
 package ra.edu.business.dao.course;
 
+import ra.edu.business.dao.AppDao;
 import ra.edu.business.model.Course;
 
 import java.util.List;
 
-public interface CourseDao {
-    List<Course> getCourses();
+public interface CourseDao extends AppDao<Course> {
+    List<Course> findAll();
     List<Course> getCoursesByPage(int page, int pageSize);
     Course getCourseById(int id);
-    boolean createCourse(Course course);
-    boolean updateCourse(Course course);
+    boolean create(Course course);
+    boolean update(Course course);
+    boolean delete(Course course);
 }

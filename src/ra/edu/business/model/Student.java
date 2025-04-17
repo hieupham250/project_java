@@ -83,11 +83,11 @@ public class Student {
         this.password = password;
     }
 
-    public LocalDate getCreate_at() {
+    public LocalDate getCreateAt() {
         return create_at;
     }
 
-    public void setCreate_at(LocalDate create_at) {
+    public void setCreateAt(LocalDate create_at) {
         this.create_at = create_at;
     }
 
