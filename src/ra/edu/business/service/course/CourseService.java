@@ -13,9 +13,9 @@ public interface CourseService extends AppService<Course> {
 
     Course getCourseById(int id);
 
-    List<Course> searchCoursesByName(String name, int page, int pageSize);
+    List<Course> searchCoursesByName(String name);
 
-    List<Course> getCoursesSorted(String sort_option, int page, int pageSize);
+    List<Course> getCoursesSorted(String sort_option);
 
     boolean isCourseNameExist(String name);
 

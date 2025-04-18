@@ -3,10 +3,7 @@ package ra.edu.business.dao.course;
 import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.Course;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,16 +93,14 @@ public class CourseDaoImp implements CourseDao {
     }
 
     @Override
-    public List<Course> searchCoursesByName(String name, int page, int pageSize) {
+    public List<Course> searchCoursesByName(String name) {
         List<Course> courses = new ArrayList<Course>();
         Connection conn = null;
         CallableStatement cstmt = null;
         try {
             conn = ConnectionDB.openConnection();
-            cstmt = conn.prepareCall("{call search_courses_by_name(?, ?, ?)}");
+            cstmt = conn.prepareCall("{call search_courses_by_name(?)}");
             cstmt.setString(1, name);
-            cstmt.setInt(2, page);
-            cstmt.setInt(3, pageSize);
             ResultSet rs = cstmt.executeQuery();
             while (rs.next()) {
                 Course course = new Course(
@@ -126,16 +121,14 @@ public class CourseDaoImp implements CourseDao {
     }
 
     @Override
-    public List<Course> getCoursesSorted(String sort_option, int page, int pageSize) {
+    public List<Course> getCoursesSorted(String sort_option) {
         List<Course> courses = new ArrayList<Course>();
         Connection conn = null;
         CallableStatement cstmt = null;
         try {
             conn = ConnectionDB.openConnection();
-            cstmt = conn.prepareCall("{call get_courses_sorted_paginated(?, ?, ?)}");
+            cstmt = conn.prepareCall("{call get_courses_sorted_paginated(?)}");
             cstmt.setString(1, sort_option);
-            cstmt.setInt(2, page);
-            cstmt.setInt(3, pageSize);
             ResultSet rs = cstmt.executeQuery();
             while (rs.next()) {
                 Course course = new Course(

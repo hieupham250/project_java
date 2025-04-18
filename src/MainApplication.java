@@ -8,10 +8,8 @@ import java.util.Scanner;
 public class MainApplication {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Account loggedInAccount;
-
-        do {
-            loggedInAccount = LoginUI.login(sc);
+        while (true) {
+            Account loggedInAccount = LoginUI.login(sc);
             if (loggedInAccount != null) {
                 switch (loggedInAccount.getRole()) {
                     case ADMIN:
@@ -26,10 +24,9 @@ public class MainApplication {
                         System.out.println("\u001B[31mKhông xác định quyền hạn!\u001B[0m");
                         break;
                 }
-                break;
             } else {
                 System.out.println("\u001B[31mĐăng nhập không thành công. Email hoặc mật khẩu không chính xác!\u001B[0m");
             }
-        } while (true);
+        }
     }
 }

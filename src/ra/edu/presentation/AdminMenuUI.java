@@ -26,7 +26,7 @@ public class AdminMenuUI {
                 case 4:
                     break;
                 case 5:
-                    System.out.println("\u001B[32mĐăng xuất thành công!\u001B[0m");
+                    LoginUI.logout();
                     return;
                 default:
                     System.out.println("\u001B[31mLựa chọn không hợp lệ!\u001B[0m");

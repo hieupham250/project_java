@@ -128,31 +128,26 @@ select * from courses where id = id_in;
 end;
 
 create procedure search_courses_by_name(
-    name_in varchar(100),
-    page_size_in int,
-    offset_in int
+    name_in varchar(100)
 )
 begin
 select *
 from courses
-where name like concat('%', name_in, '%')
-    limit page_size_in offset offset_in;
+where name like concat('%', name_in, '%');
 end;
 
 create procedure get_courses_sorted_paginated(
-    sort_option varchar(20),
-    page_size_in int,
-    offset_in int
+    sort_option varchar(20)
 )
 begin
     if lower(sort_option) = 'id_asc' then
-select * from courses order by id asc limit page_size_in offset offset_in;
+select * from courses order by id asc;
 elseif lower(sort_option) = 'id_desc' then
-select * from courses order by id desc limit page_size_in offset offset_in;
+select * from courses order by id desc;
 elseif lower(sort_option) = 'name_asc' then
-select * from courses order by name asc limit page_size_in offset offset_in;
+select * from courses order by name asc;
 elseif lower(sort_option) = 'name_desc' then
-select * from courses order by name desc limit page_size_in offset offset_in;
+select * from courses order by name desc;
 end if;
 end;
 

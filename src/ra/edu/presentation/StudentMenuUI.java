@@ -1,7 +1,9 @@
 package ra.edu.presentation;
 
+import ra.edu.business.model.Course;
 import ra.edu.validate.Validator;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class StudentMenuUI {
@@ -18,6 +20,8 @@ public class StudentMenuUI {
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:
+                    List<Course> courses = CourseUI.courseService.findAll();
+                    CourseUI.paginate(courses, sc);
                     break;
                 case 2:
                     break;
@@ -28,7 +32,7 @@ public class StudentMenuUI {
                 case 5:
                     break;
                 case 6:
-                    System.out.println("\u001B[32mĐăng xuất thành công!\u001B[0m");
+                    LoginUI.logout();
                     return;
                 default:
                     System.out.println("\u001B[31mLựa chọn không hợp lệ!\u001B[0m");

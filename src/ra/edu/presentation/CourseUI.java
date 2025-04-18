@@ -4,8 +4,6 @@ import ra.edu.business.model.Course;
 import ra.edu.business.service.course.CourseService;
 import ra.edu.business.service.course.CourseServiceImp;
 import ra.edu.utils.TableUtils;
-import ra.edu.utils.pagination.PaginationConfig;
-import ra.edu.utils.pagination.PaginationUtils;
 import ra.edu.validate.CourseValidator;
 import ra.edu.validate.StringRule;
 import ra.edu.validate.Validator;
@@ -14,7 +12,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CourseUI {
-    private static final CourseService courseService = new CourseServiceImp();
+    public static CourseService courseService = new CourseServiceImp();
+    private static final int totalItems = 5;
 
     public static void menuCourseManager(Scanner sc) {
         do {
@@ -55,19 +54,51 @@ public class CourseUI {
         } while (true);
     }
 
-    public static void displayCourses(Scanner sc) {
-        int totalCourses = courseService.findAll().size();
-        int pageSize = 5;
-        PaginationConfig<Course> config = new PaginationConfig<>(
-                totalCourses,
-                pageSize,
-                sc,
-                TableUtils::printCourseHeader,
-                TableUtils::printCourseRow
-        );
-        PaginationUtils.paginate(config, courseService::getCoursesByPage);
+    public static void paginate(List<Course> courses, Scanner sc) {
+        int size = courses.size();
+        if (size == 0) {
+            System.out.println("\u001B[31mKhông có dữ liệu để hiển thị!\u001B[0m");
+            return;
+        }
+        int currentPage = 1;
+        int totalPages = (int) Math.ceil((double) size / totalItems);
+        do {
+            int start = (currentPage - 1) * totalItems;
+            int end = Math.min(start + totalItems, size);
+            System.out.printf("Danh sách (Trang %d / %d):\n", currentPage, totalPages);
+            TableUtils.printCoursesTable(courses.subList(start, end));
+            System.out.println("========= Lựa chọn =========");
+            System.out.println("1. Xem trang trước");
+            System.out.println("2. Xem trang tiếp theo");
+            System.out.println("3. Quay lại menu");
+            int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
+            switch (choice) {
+                case 1:
+                    if (currentPage > 1) {
+                        currentPage--;
+                    } else {
+                        System.out.println("\u001B[31mĐây là trang đầu tiên!\u001B[0m");
+                    }
+                    break;
+                case 2:
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                    } else {
+                        System.out.println("\u001B[31mĐã là trang cuối cùng!\u001B[0m");
+                    }
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.out.println("\u001B[31mLựa chọn không hợp lệ!\u001B[0m");
+            }
+        } while (true);
     }
 
+    public static void displayCourses(Scanner sc) {
+        List<Course> courses = courseService.findAll();
+        paginate(courses, sc);
+    }
 
     public static void createCourse(Scanner sc) {
         Course course = new Course();
@@ -75,7 +106,7 @@ public class CourseUI {
         if (courseService.create(course)) {
             System.out.println("\u001B[32mThêm khóa học thành công!\u001B[0m");
         } else {
-            System.out.println("u001B[31mLỗi khi thêm khóa học.u001B[0m");
+            System.out.println("\u001B[31mLỗi khi thêm khóa học.\u001B[0m");
         }
     }
 
@@ -92,8 +123,7 @@ public class CourseUI {
             return;
         }
         System.out.println("Thông tin khóa học hiện tại:");
-        TableUtils.printCourseHeader();
-        TableUtils.printCourseRow(existingCourse);
+        TableUtils.printCourseTable(existingCourse);
         while (true) {
             System.out.println("========= Chọn thông tin muốn cập nhật =========");
             System.out.println("1. Tên khóa học");
@@ -154,8 +184,7 @@ public class CourseUI {
             return;
         }
         System.out.println("Thông tin khóa học muốn xóa:");
-        TableUtils.printCourseHeader();
-        TableUtils.printCourseRow(existingCourse);
+        TableUtils.printCourseTable(existingCourse);
         System.out.println("Bạn có chắc chắn muốn xóa khóa học này?");
         while (true) {
             System.out.println("1. xác nhận");
@@ -184,22 +213,12 @@ public class CourseUI {
     public static void searchCourseByName(Scanner sc) {
         String name = Validator.validateInputString("Nhập tên khóa học muốn tìm kiếm: ", sc, new StringRule(100, "Dữ liệu không được để trống!"));
         System.out.println("Tìm kiếm khóa học với từ khóa: " + name);
-        List<Course> courses = courseService.searchCoursesByName(name, 1, 5);
+        List<Course> courses = courseService.searchCoursesByName(name);
         if (courses.isEmpty()) {
             System.out.println("\u001B[31mKhông tìm thấy khóa học nào với từ khóa " + name + "!\u001B[0m");
             return;
         }
-        int totalCourses = courses.size();
-        int pageSize = 5;
-        PaginationConfig<Course> config = new PaginationConfig<>(
-                totalCourses,
-                pageSize,
-                sc,
-                TableUtils::printCourseHeader,
-                TableUtils::printCourseRow
-        );
-        PaginationUtils.paginate(config, (page, size) ->
-                courseService.searchCoursesByName(name, page, size));
+        paginate(courses, sc);
     }
 
     private static String getSortOption(Scanner sc) {
@@ -246,21 +265,11 @@ public class CourseUI {
         String sortOption = getSortOption(sc);
         if (sortOption == null) return;
 
-        List<Course> sortedCourses = courseService.getCoursesSorted(sortOption, 1, 5);
+        List<Course> sortedCourses = courseService.getCoursesSorted(sortOption);
         if (sortedCourses.isEmpty()) {
             System.out.println("\u001B[31mKhông có khóa học nào để hiển thị!\u001B[0m");
             return;
         }
-
-        int pageSize = 5;
-        PaginationConfig<Course> config = new PaginationConfig<>(
-                sortedCourses.size(),
-                pageSize,
-                sc,
-                TableUtils::printCourseHeader,
-                TableUtils::printCourseRow
-        );
-        PaginationUtils.paginate(config, (page, size) ->
-                courseService.getCoursesSorted(sortOption, page, size));
+        paginate(sortedCourses, sc);
     }
 }

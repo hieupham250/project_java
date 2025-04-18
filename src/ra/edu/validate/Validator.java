@@ -28,7 +28,7 @@ public class Validator {
         do {
             try {
                 System.out.print(message);
-                String input = sc.nextLine();
+                String input = sc.nextLine().trim().replaceAll("\\s+", " ");
                 if (input.isEmpty()) {
                     System.out.println("\u001B[31m"+ stringRule.getMessageError() + "\u001B[0m");
                     continue;
