@@ -17,9 +17,10 @@ public class AdminMenuUI {
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:
-                    CourseUI.menuCourseManager(sc);
+                    CourseManager.menuCourseManager(sc);
                     break;
                 case 2:
+                    StudentManager.menuStudentManager(sc);
                     break;
                 case 3:
                     break;

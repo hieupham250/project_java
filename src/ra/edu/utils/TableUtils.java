@@ -12,9 +12,9 @@ public class TableUtils {
             "Mã khóa học", "Tên khóa học", "Thời lượng", "Giảng viên", "Ngày tạo"
     );
 
-    private static final String LINE_STUDENT = "+------------+-------------------------+------------+-------------------------+--------+-----------------+--------------+";
+    private static final String LINE_STUDENT = "+--------------+-------------------------+------------+-------------------------+-----------+-----------------+--------------+";
     private static final String HEADER_STUDENT = String.format(
-            "| %-10s | %-23s | %-10s | %-23s | %-6s | %-15s | %-12s |",
+            "| %-12s | %-23s | %-10s | %-23s | %-9s | %-15s | %-12s |",
             "Mã sinh viên", "Tên sinh viên", "Ngày sinh", "Email", "Giới tính", "Số điện thoại", "Ngày tạo"
     );
 
@@ -43,10 +43,10 @@ public class TableUtils {
         System.out.println(HEADER_STUDENT);
         System.out.println(LINE_STUDENT);
         for (Student student : students) {
-            System.out.printf("| %-10d | %-23s | %-10s | %-23s | %-6s | %-15s | %-12s |\n",
+            System.out.printf("| %-12s | %-23s | %-10s | %-23s | %-9s | %-15s | %-12s |\n",
                     student.getId(),
                     student.getName(),
-                    student.getDob() != null ? student.getDob().toString() : "N/A",
+                    student.getDob() != null ? DateUtils.formatDate(student.getDob()) : "N/A",
                     student.getEmail(),
                     (student.isSex() ? "Nam" : "Nữ"),
                     student.getPhone() != null ? student.getPhone() : "N/A",
@@ -59,10 +59,10 @@ public class TableUtils {
         System.out.println(LINE_STUDENT);
         System.out.println(HEADER_STUDENT);
         System.out.println(LINE_STUDENT);
-        System.out.printf("| %-10d | %-23s | %-10s | %-23s | %-6s | %-15s | %-12s |\n",
+        System.out.printf("| %-12s | %-23s | %-10s | %-23s | %-9s | %-15s | %-12s |\n",
                 student.getId(),
                 student.getName(),
-                student.getDob() != null ? student.getDob().toString() : "N/A",
+                student.getDob() != null ? DateUtils.formatDate(student.getDob()) : "N/A",
                 student.getEmail(),
                 (student.isSex() ? "Nam" : "Nữ"),
                 student.getPhone() != null ? student.getPhone() : "N/A",

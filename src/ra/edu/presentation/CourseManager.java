@@ -11,7 +11,7 @@ import ra.edu.validate.Validator;
 import java.util.List;
 import java.util.Scanner;
 
-public class CourseUI {
+public class CourseManager {
     public static CourseService courseService = new CourseServiceImp();
     private static final int totalItems = 5;
 
@@ -23,7 +23,7 @@ public class CourseUI {
             System.out.println(" 3. Chỉnh sửa thông tin khóa học");
             System.out.println(" 4. Xóa khóa học");
             System.out.println(" 5. Tìm kiếm theo tên");
-            System.out.println(" 6. Sắp xếp theo tên hoặc id");
+            System.out.println(" 6. Sắp xếp");
             System.out.println(" 7. quay về menu chính");
             System.out.println("==================================");
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
@@ -106,7 +106,7 @@ public class CourseUI {
         if (courseService.create(course)) {
             System.out.println("\u001B[32mThêm khóa học thành công!\u001B[0m");
         } else {
-            System.out.println("\u001B[31mLỗi khi thêm khóa học.\u001B[0m");
+            System.out.println("\u001B[31mLỗi khi thêm khóa học!\u001B[0m");
         }
     }
 

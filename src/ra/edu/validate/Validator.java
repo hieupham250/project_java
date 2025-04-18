@@ -55,8 +55,8 @@ public class Validator {
     }
 
     public static LocalDate validateDate(String message, Scanner sc) {
-        System.out.print(message);
         do {
+            System.out.print(message);
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             try {
                 return LocalDate.parse(sc.nextLine(), dtf);

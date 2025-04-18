@@ -189,4 +189,34 @@ create procedure delete_course(id_in int)
 begin
 delete from courses where id = id_in;
 end;
+
+create procedure get_students()
+begin
+select s.*, a.email, a.password from students s left join accounts a on a.id = s.account_id;
+end;
+
+create procedure is_exist_email(email_in varchar(100))
+begin
+select count(*) > 0 as is_exist from accounts where email = email_in;
+end;
+
+create procedure create_student(
+    name_in varchar(100),
+    dob_in date,
+    sex_in bit,
+    phone_in varchar(15),
+    email_in varchar(100),
+    password_in varchar(255)
+)
+begin
+    declare acc_id int;
+
+insert into accounts(email, password, role)
+values (email_in, password_in, 'student');
+
+set acc_id = last_insert_id();
+
+insert into students(name, dob, sex, phone, account_id, create_at)
+values (name_in, dob_in, sex_in, phone_in, acc_id, curdate());
+end;
 delimiter //

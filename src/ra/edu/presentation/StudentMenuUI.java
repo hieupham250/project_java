@@ -20,8 +20,8 @@ public class StudentMenuUI {
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:
-                    List<Course> courses = CourseUI.courseService.findAll();
-                    CourseUI.paginate(courses, sc);
+                    List<Course> courses = CourseManager.courseService.findAll();
+                    CourseManager.paginate(courses, sc);
                     break;
                 case 2:
                     break;
