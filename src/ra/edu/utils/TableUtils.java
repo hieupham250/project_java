@@ -3,8 +3,6 @@ package ra.edu.utils;
 import ra.edu.business.model.Course;
 import ra.edu.business.model.Student;
 
-
-
 public class TableUtils {
     private static final String LINE = "+--------------+--------------------------------+------------+------------------------+--------------+";
     private static final String HEADER_COURSE = String.format(
@@ -24,7 +22,7 @@ public class TableUtils {
         System.out.println(LINE);
     }
 
-    public static void printCourse(Course course) {
+    public static void printCourseRow(Course course) {
         System.out.printf("| %-12d | %-30s | %-10d | %-22s | %-12s |\n",
                 course.getId(), course.getName(), course.getDuration(), course.getInstructor(), DateUtils.formatDate(course.getCreateAt()));
         System.out.println(LINE);
@@ -36,7 +34,7 @@ public class TableUtils {
         System.out.println(LINE_STUDENT);
     }
 
-    public static void printStudent(Student student) {
+    public static void printStudentRow(Student student) {
         System.out.printf("| %-10d | %-23s | %-10s | %-23s | %-6s | %-15s | %-12s |\n",
                 student.getId(),
                 student.getName(),

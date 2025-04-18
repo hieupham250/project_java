@@ -1,52 +1,35 @@
 package ra.edu.utils.pagination;
 
-import ra.edu.business.model.Course;
-import ra.edu.utils.TableUtils;
+import ra.edu.business.service.course.CourseService;
+import ra.edu.business.service.course.CourseServiceImp;
 import ra.edu.validate.Validator;
 
+import java.util.List;
+
 public class PaginationUtils {
-    public static <T> boolean paginate(PaginationConfig<T> config) {
-        if (config.items == null || config.items.isEmpty()) {
+    public static <T> void paginate(PaginationConfig<T> config, ListProvider<T> provider) {
+        CourseService courseService = new CourseServiceImp();
+        if (config.getTotalItems() == 0) {
             System.out.println("\u001B[31mKhông có dữ liệu để hiển thị!\u001B[0m");
-            return false;
+            return;
         }
-        int totalItems = config.items.size();
-        int totalPages = (int) Math.ceil((double) totalItems / config.pageSize);
-        int page = Math.max(1, Math.min(config.page, totalPages));
-
-        boolean continuePagination = true;
-        while (continuePagination) {
-            System.out.printf("Danh sách (Trang %d / %d):\n", page, totalPages);
-            // Lấy tên lớp của đối tượng đầu tiên trong danh sách để quyết định hiển thị header
-            String className = config.items.getFirst().getClass().getSimpleName();
-            // Kiểm tra và hiển thị header tùy theo loại đối tượng
-            switch (className) {
-                case "Course":
-                    TableUtils.printCourseHeader();  // Hiển thị header cho Course
-                    break;
-                case "Student":
-                    TableUtils.printStudentHeader();  // Hiển thị header cho Student
-                    break;
-                default:
-                    System.out.println("\u001B[31mLoại đối tượng không hợp lệ!\u001B[0m");
-                    return false;
+        int totalPages = (int) Math.ceil((double) config.getTotalItems() / (double) config.getPageSize());
+        int currentPage = 1;
+        List<T> currentPageData = provider.getDataByPage(currentPage, config.getPageSize());
+        do {
+            System.out.printf("Danh sách (Trang %d / %d):\n", currentPage, totalPages);
+            config.getPrintHeader().run();
+            if (currentPageData != null) {
+                currentPageData.forEach(config.getPrintItem());
             }
-
-            int fromIndex = (page - 1) * config.pageSize;
-            int toIndex = Math.min(fromIndex + config.pageSize, totalItems);
-
-            // In từng đối tượng trong danh sách
-            config.items.subList(fromIndex, toIndex).forEach(item -> {
-                switch (className) {
-                    case "Course":
-                        TableUtils.printCourse((Course) item);  // In thông tin Course
-                        break;
-                    case "Student":
-//                        DisplayUtils.printStudent((Student) item);  // In thông tin Student
-                        break;
+            for (int i = 1; i <= totalPages; i++) {
+                if (i == currentPage) {
+                    System.out.print("\u001B[34m[Trang " + i + "]\u001B[0m");
+                } else {
+                    System.out.print(" Trang " + i);
                 }
-            });
-
+            }
+            System.out.println();
             System.out.println("========= Lựa chọn =========");
             System.out.println("1. Xem trang trước");
             System.out.println("2. Xem trang tiếp theo");
@@ -54,28 +37,27 @@ public class PaginationUtils {
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", config.sc);
             switch (choice) {
                 case 1:
-                    if (page > 1) {
-                        page--;
+                    if (currentPage > 1) {
+                        currentPage--;
+                        currentPageData = provider.getDataByPage(currentPage, config.getPageSize());
                     } else {
                         System.out.println("\u001B[31mĐây là trang đầu tiên!\u001B[0m");
                     }
                     break;
                 case 2:
-                    if (page < totalPages) {
-                        page++;
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        currentPageData = provider.getDataByPage(currentPage, config.getPageSize());
                     } else {
                         System.out.println("\u001B[31mKhông còn trang tiếp theo!\u001B[0m");
                     }
                     break;
                 case 3:
-                    continuePagination = false;
-                    break;
+                    return;
                 default:
                     System.out.println("\u001B[31mLựa chọn không hợp lệ!\u001B[0m");
                     break;
             }
-        }
-        return true;
+        } while (true);
     }
-
 }

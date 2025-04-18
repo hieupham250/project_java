@@ -29,6 +29,26 @@ public class CourseServiceImp implements CourseService {
     }
 
     @Override
+    public List<Course> searchCoursesByName(String name) {
+        return courseDao.searchCoursesByName(name);
+    }
+
+    @Override
+    public List<Course> getCoursesSorted(String sort_option) {
+        return courseDao.getCoursesSorted(sort_option);
+    }
+
+    @Override
+    public boolean isCourseNameExist(String name) {
+        return courseDao.isCourseNameExist(name);
+    }
+
+    @Override
+    public boolean checkCourseHasStudents(int id) {
+        return courseDao.checkCourseHasStudents(id);
+    }
+
+    @Override
     public boolean create(Course course) {
         return courseDao.create(course);
     }
@@ -42,5 +62,4 @@ public class CourseServiceImp implements CourseService {
     public boolean delete(Course course) {
         return courseDao.delete(course);
     }
-
 }

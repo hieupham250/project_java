@@ -1,5 +1,6 @@
 package ra.edu.business.model;
 
+import ra.edu.business.service.course.CourseService;
 import ra.edu.validate.CourseValidator;
 import ra.edu.validate.StringRule;
 import ra.edu.validate.Validator;
@@ -67,10 +68,10 @@ public class Course {
         this.create_at = create_at;
     }
 
-    public void inputData(Scanner sc, List<Course> existingCourses) {
+    public void inputData(Scanner sc, CourseService courseService) {
         while (true) {
             String inputName = Validator.validateInputString("Nhập tên khóa học: ", sc, new StringRule(100, "Tên khóa học không được để trống!"));
-            if (CourseValidator.isNameExisted(inputName, existingCourses)) {
+            if (CourseValidator.isNameExisted(inputName, courseService)) {
                 System.out.println("\u001B[31mTên khóa học đã tồn tại. Vui lòng nhập tên khác!\u001B[0m");
             } else {
                 this.name = inputName;

@@ -16,11 +16,10 @@ public class CourseDaoImp implements CourseDao {
         List<Course> courses = new ArrayList<Course>();
         Connection conn = null;
         CallableStatement cstmt = null;
-        ResultSet rs = null;
         try {
             conn = ConnectionDB.openConnection();
             cstmt = conn.prepareCall("{call get_courses()}");
-            rs = cstmt.executeQuery();
+            ResultSet rs = cstmt.executeQuery();
             while (rs.next()) {
                 Course course = new Course(
                         rs.getInt("id"),
@@ -44,14 +43,13 @@ public class CourseDaoImp implements CourseDao {
         List<Course> courses = new ArrayList<Course>();
         Connection conn = null;
         CallableStatement cstmt = null;
-        ResultSet rs = null;
         try {
             conn = ConnectionDB.openConnection();
             int offset = (page - 1) * pageSize;
             cstmt = conn.prepareCall("{call get_courses_by_page(?, ?)}");
             cstmt.setInt(1, pageSize);
             cstmt.setInt(2, offset);
-            rs = cstmt.executeQuery();
+            ResultSet rs = cstmt.executeQuery();
             while (rs.next()) {
                 Course course = new Course(
                         rs.getInt("id"),
@@ -70,16 +68,16 @@ public class CourseDaoImp implements CourseDao {
         return courses;
     }
 
+    @Override
     public Course getCourseById(int id) {
         Connection conn = null;
         CallableStatement cstmt = null;
         Course course = null;
-        ResultSet rs = null;
         try {
             conn = ConnectionDB.openConnection();
             cstmt = conn.prepareCall("{call get_course_by_id(?)}");
             cstmt.setInt(1, id);
-            rs = cstmt.executeQuery();
+            ResultSet rs = cstmt.executeQuery();
             if (rs.next()) {
                 course = new Course(
                         rs.getInt("id"),
@@ -95,6 +93,101 @@ public class CourseDaoImp implements CourseDao {
             ConnectionDB.closeConnection(conn, cstmt);
         }
         return course;
+    }
+
+    @Override
+    public List<Course> searchCoursesByName(String name) {
+        List<Course> courses = new ArrayList<Course>();
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            cstmt = conn.prepareCall("{call get_courses_by_name(?)}");
+            cstmt.setString(1, name);
+            ResultSet rs = cstmt.executeQuery();
+            while (rs.next()) {
+                Course course = new Course(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("duration"),
+                        rs.getString("instructor"),
+                        rs.getDate("create_at").toLocalDate()
+                );
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return courses;
+    }
+
+    @Override
+    public List<Course> getCoursesSorted(String sort_option) {
+        List<Course> courses = new ArrayList<Course>();
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            cstmt = conn.prepareCall("{call get_courses_sorted(?)}");
+            cstmt.setString(1, sort_option);
+            ResultSet rs = cstmt.executeQuery();
+            while (rs.next()) {
+                Course course = new Course(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("duration"),
+                        rs.getString("instructor"),
+                        rs.getDate("create_at").toLocalDate()
+                );
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return courses;
+    }
+
+    @Override
+    public boolean isCourseNameExist(String name) {
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            cstmt = conn.prepareCall("{call is_exist_name(?)}");
+            cstmt.setString(1, name);
+            ResultSet rs = cstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("is_exist") == 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return false;
+    }
+
+    public boolean checkCourseHasStudents(int id) {
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            cstmt = conn.prepareCall("{call check_course_has_students(?)}");
+            cstmt.setInt(1, id);
+            ResultSet rs = cstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("has_students") == 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return false;
     }
 
     @Override
