@@ -6,13 +6,12 @@ import ra.edu.business.service.course.CourseServiceImp;
 import ra.edu.utils.TableUtils;
 import ra.edu.utils.pagination.PaginationConfig;
 import ra.edu.utils.pagination.PaginationUtils;
+import ra.edu.validate.CourseValidator;
 import ra.edu.validate.StringRule;
 import ra.edu.validate.Validator;
 
 import java.util.List;
 import java.util.Scanner;
-
-import static ra.edu.validate.CourseValidator.isUpdateNameConflict;
 
 public class CourseUI {
     private static final CourseService courseService = new CourseServiceImp();
@@ -105,7 +104,7 @@ public class CourseUI {
             switch (choice) {
                 case 1:
                     String newName = Validator.validateInputString("Nhập tên khóa học mới: ", sc, new StringRule(100, "Tên khóa học không được để trống!"));
-                    if (isUpdateNameConflict(newName, id, courseService)) {
+                    if (CourseValidator.isNameExisted(newName, courseService)) {
                         System.out.println("\u001B[31mTên khóa học đã tồn tại. Vui lòng nhập tên khác!\u001B[0m");
                     } else {
                         existingCourse.setName(newName);
@@ -184,7 +183,8 @@ public class CourseUI {
 
     public static void searchCourseByName(Scanner sc) {
         String name = Validator.validateInputString("Nhập tên khóa học muốn tìm kiếm: ", sc, new StringRule(100, "Dữ liệu không được để trống!"));
-        List<Course> courses = courseService.searchCoursesByName(name);
+        System.out.println("Tìm kiếm khóa học với từ khóa: " + name);
+        List<Course> courses = courseService.searchCoursesByName(name, 1, 5);
         if (courses.isEmpty()) {
             System.out.println("\u001B[31mKhông tìm thấy khóa học nào với từ khóa " + name + "!\u001B[0m");
             return;
@@ -198,7 +198,8 @@ public class CourseUI {
                 TableUtils::printCourseHeader,
                 TableUtils::printCourseRow
         );
-        PaginationUtils.paginate(config, courseService::getCoursesByPage);
+        PaginationUtils.paginate(config, (page, size) ->
+                courseService.searchCoursesByName(name, page, size));
     }
 
     private static String getSortOption(Scanner sc) {
@@ -245,9 +246,7 @@ public class CourseUI {
         String sortOption = getSortOption(sc);
         if (sortOption == null) return;
 
-        System.out.println(sortOption);
-
-        List<Course> sortedCourses = courseService.getCoursesSorted(sortOption);
+        List<Course> sortedCourses = courseService.getCoursesSorted(sortOption, 1, 5);
         if (sortedCourses.isEmpty()) {
             System.out.println("\u001B[31mKhông có khóa học nào để hiển thị!\u001B[0m");
             return;
@@ -261,6 +260,7 @@ public class CourseUI {
                 TableUtils::printCourseHeader,
                 TableUtils::printCourseRow
         );
-        PaginationUtils.paginate(config, courseService::getCoursesByPage);
+        PaginationUtils.paginate(config, (page, size) ->
+                courseService.getCoursesSorted(sortOption, page, size));
     }
 }
