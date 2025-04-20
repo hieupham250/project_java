@@ -128,26 +128,37 @@ select * from courses where id = id_in;
 end;
 
 create procedure search_courses_by_name(
-    name_in varchar(100)
+    keyword_in varchar(100),
+    page_size_in int,
+    offset_in int,
+    OUT total_records int
 )
 begin
+select count(*)
+into total_records
+from courses
+where name like concat('%', keyword_in, '%');
+
 select *
 from courses
-where name like concat('%', name_in, '%');
+where name like concat('%', keyword_in, '%')
+    limit page_size_in offset offset_in;
 end;
 
 create procedure get_courses_sorted_paginated(
-    sort_option varchar(20)
+    sort_option varchar(20),
+    page_size_in int,
+    offset_in int
 )
 begin
     if lower(sort_option) = 'id_asc' then
-select * from courses order by id asc;
+select * from courses order by id asc limit page_size_in offset offset_in;
 elseif lower(sort_option) = 'id_desc' then
-select * from courses order by id desc;
+select * from courses order by id desc limit page_size_in offset offset_in;
 elseif lower(sort_option) = 'name_asc' then
-select * from courses order by name asc;
+select * from courses order by name asc limit page_size_in offset offset_in;
 elseif lower(sort_option) = 'name_desc' then
-select * from courses order by name desc;
+select * from courses order by name desc limit page_size_in offset offset_in;
 end if;
 end;
 
@@ -192,7 +203,9 @@ end;
 
 create procedure get_students()
 begin
-select s.*, a.email, a.password from students s left join accounts a on a.id = s.account_id;
+select s.*, a.email, a.password
+from students s
+         left join accounts a on a.id = s.account_id;
 end;
 
 create procedure is_exist_email(email_in varchar(100))

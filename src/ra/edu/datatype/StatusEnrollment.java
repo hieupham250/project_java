@@ -1,4 +1,4 @@
 package ra.edu.datatype;
 
-public class StatusEnrollment {
+public enum StatusEnrollment {
 }

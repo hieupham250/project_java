@@ -93,25 +93,32 @@ public class CourseDaoImp implements CourseDao {
     }
 
     @Override
-    public List<Course> searchCoursesByName(String name) {
+    public List<Course> searchCoursesByName(String keyword, int page, int pageSize, int[] totalRecordsOut) {
         List<Course> courses = new ArrayList<Course>();
         Connection conn = null;
         CallableStatement cstmt = null;
         try {
             conn = ConnectionDB.openConnection();
-            cstmt = conn.prepareCall("{call search_courses_by_name(?)}");
-            cstmt.setString(1, name);
-            ResultSet rs = cstmt.executeQuery();
-            while (rs.next()) {
-                Course course = new Course(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getInt("duration"),
-                        rs.getString("instructor"),
-                        rs.getDate("create_at").toLocalDate()
-                );
-                courses.add(course);
+            int offset = (page - 1) * pageSize;
+            cstmt = conn.prepareCall("{call search_courses_by_name(?, ?, ?, ?)}");
+            cstmt.setString(1, keyword);
+            cstmt.setInt(2, pageSize);
+            cstmt.setInt(3, offset);
+            boolean hasResultSet = cstmt.execute();
+            if (hasResultSet) {
+                ResultSet rs = cstmt.getResultSet();
+                while (rs.next()) {
+                    Course course = new Course(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getInt("duration"),
+                            rs.getString("instructor"),
+                            rs.getDate("create_at").toLocalDate()
+                    );
+                    courses.add(course);
+                }
             }
+            totalRecordsOut[0] = cstmt.getInt(4);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -121,14 +128,17 @@ public class CourseDaoImp implements CourseDao {
     }
 
     @Override
-    public List<Course> getCoursesSorted(String sort_option) {
+    public List<Course> getCoursesSorted(String sortOption, int page, int pageSize) {
         List<Course> courses = new ArrayList<Course>();
         Connection conn = null;
         CallableStatement cstmt = null;
         try {
             conn = ConnectionDB.openConnection();
-            cstmt = conn.prepareCall("{call get_courses_sorted_paginated(?)}");
-            cstmt.setString(1, sort_option);
+            int offset = (page - 1) * pageSize;
+            cstmt = conn.prepareCall("{call get_courses_sorted_paginated(?, ?, ?)}");
+            cstmt.setString(1, sortOption);
+            cstmt.setInt(2, pageSize);
+            cstmt.setInt(3, offset);
             ResultSet rs = cstmt.executeQuery();
             while (rs.next()) {
                 Course course = new Course(

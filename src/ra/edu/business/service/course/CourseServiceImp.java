@@ -29,13 +29,13 @@ public class CourseServiceImp implements CourseService {
     }
 
     @Override
-    public List<Course> searchCoursesByName(String name) {
-        return courseDao.searchCoursesByName(name);
+    public List<Course> searchCoursesByName(String keyword, int page, int pageSize, int[] totalRecordsOut) {
+        return courseDao.searchCoursesByName(keyword, page, pageSize, totalRecordsOut);
     }
 
     @Override
-    public List<Course> getCoursesSorted(String sort_option) {
-        return courseDao.getCoursesSorted(sort_option);
+    public List<Course> getCoursesSorted(String sortOption, int page, int pageSize) {
+        return courseDao.getCoursesSorted(sortOption, page, pageSize);
     }
 
     @Override

@@ -3,6 +3,8 @@ package ra.edu.presentation;
 import ra.edu.business.model.Course;
 import ra.edu.business.service.course.CourseService;
 import ra.edu.business.service.course.CourseServiceImp;
+import ra.edu.datatype.PaginationOption;
+import ra.edu.utils.PaginationUtils;
 import ra.edu.utils.TableUtils;
 import ra.edu.validate.CourseValidator;
 import ra.edu.validate.StringRule;
@@ -13,7 +15,6 @@ import java.util.Scanner;
 
 public class CourseManager {
     public static CourseService courseService = new CourseServiceImp();
-    private static final int totalItems = 5;
 
     public static void menuCourseManager(Scanner sc) {
         do {
@@ -54,50 +55,13 @@ public class CourseManager {
         } while (true);
     }
 
-    public static void paginate(List<Course> courses, Scanner sc) {
-        int size = courses.size();
-        if (size == 0) {
-            System.out.println("\u001B[31mKhông có dữ liệu để hiển thị!\u001B[0m");
-            return;
-        }
-        int currentPage = 1;
-        int totalPages = (int) Math.ceil((double) size / totalItems);
-        do {
-            int start = (currentPage - 1) * totalItems;
-            int end = Math.min(start + totalItems, size);
-            System.out.printf("Danh sách (Trang %d / %d):\n", currentPage, totalPages);
-            TableUtils.printCoursesTable(courses.subList(start, end));
-            System.out.println("========= Lựa chọn =========");
-            System.out.println("1. Xem trang trước");
-            System.out.println("2. Xem trang tiếp theo");
-            System.out.println("3. Quay lại menu");
-            int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
-            switch (choice) {
-                case 1:
-                    if (currentPage > 1) {
-                        currentPage--;
-                    } else {
-                        System.out.println("\u001B[31mĐây là trang đầu tiên!\u001B[0m");
-                    }
-                    break;
-                case 2:
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                    } else {
-                        System.out.println("\u001B[31mĐã là trang cuối cùng!\u001B[0m");
-                    }
-                    break;
-                case 3:
-                    return;
-                default:
-                    System.out.println("\u001B[31mLựa chọn không hợp lệ!\u001B[0m");
-            }
-        } while (true);
-    }
-
     public static void displayCourses(Scanner sc) {
-        List<Course> courses = courseService.findAll();
-        paginate(courses, sc);
+        PaginationUtils<CourseService> paginator  = new PaginationUtils<>(
+                "",
+                PaginationOption.LIST_ALL,
+                courseService
+        );
+        paginator.paginate(sc);
     }
 
     public static void createCourse(Scanner sc) {
@@ -116,7 +80,7 @@ public class CourseManager {
             System.out.println("\u001B[31mHiện không có khóa học nào để cập nhật!\u001B[0m");
             return;
         }
-        int id = Validator.validateInputInteger("Nhập mã khóa học muốn cập nhât: ", sc);
+        int id = Validator.validateInputInteger("Nhập mã khóa học muốn cập nhật: ", sc);
         Course existingCourse = courseService.getCourseById(id);
         if (existingCourse == null) {
             System.out.println("\u001B[31mMã khóa học không tồn tại!\u001B[0m");
@@ -211,14 +175,13 @@ public class CourseManager {
     }
 
     public static void searchCourseByName(Scanner sc) {
-        String name = Validator.validateInputString("Nhập tên khóa học muốn tìm kiếm: ", sc, new StringRule(100, "Dữ liệu không được để trống!"));
-        System.out.println("Tìm kiếm khóa học với từ khóa: " + name);
-        List<Course> courses = courseService.searchCoursesByName(name);
-        if (courses.isEmpty()) {
-            System.out.println("\u001B[31mKhông tìm thấy khóa học nào với từ khóa " + name + "!\u001B[0m");
-            return;
-        }
-        paginate(courses, sc);
+        String keyword = Validator.validateInputString("Nhập tên khóa học muốn tìm kiếm: ", sc, new StringRule(100, "Dữ liệu không được để trống!"));
+        PaginationUtils<CourseService> paginator  = new PaginationUtils<>(
+                keyword,
+                PaginationOption.SEARCH,
+                courseService
+        );
+        paginator.paginate(sc);
     }
 
     private static String getSortOption(Scanner sc) {
@@ -264,12 +227,11 @@ public class CourseManager {
     public static void sortCourses(Scanner sc) {
         String sortOption = getSortOption(sc);
         if (sortOption == null) return;
-
-        List<Course> sortedCourses = courseService.getCoursesSorted(sortOption);
-        if (sortedCourses.isEmpty()) {
-            System.out.println("\u001B[31mKhông có khóa học nào để hiển thị!\u001B[0m");
-            return;
-        }
-        paginate(sortedCourses, sc);
+        PaginationUtils<CourseService> paginator  = new PaginationUtils<>(
+                sortOption,
+                PaginationOption.SORT,
+                courseService
+        );
+        paginator.paginate(sc);
     }
 }

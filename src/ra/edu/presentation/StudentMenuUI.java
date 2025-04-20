@@ -1,9 +1,7 @@
 package ra.edu.presentation;
 
-import ra.edu.business.model.Course;
 import ra.edu.validate.Validator;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class StudentMenuUI {
@@ -20,8 +18,7 @@ public class StudentMenuUI {
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:
-                    List<Course> courses = CourseManager.courseService.findAll();
-                    CourseManager.paginate(courses, sc);
+                    CourseManager.displayCourses(sc);
                     break;
                 case 2:
                     break;
