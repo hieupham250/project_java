@@ -12,14 +12,40 @@ public class StudentServiceImp implements StudentService {
     public StudentServiceImp() {
         studentDao = new StudentDaoImp();
     }
+
     @Override
     public List<Student> findAll() {
         return studentDao.findAll();
     }
 
     @Override
+    public List<Student> getStudentsByPage(int page, int pageSize) {
+        return studentDao.getStudentsByPage(page, pageSize);
+    }
+
+    @Override
+    public Student getStudentById(int id) {
+        return studentDao.getStudentById(id);
+    }
+
+    @Override
+    public List<Student> searchStudentsByName(String name, int page, int pageSize, int[] totalRecordsOut) {
+        return studentDao.searchStudentsByName(name, page, pageSize, totalRecordsOut);
+    }
+
+    @Override
+    public List<Student> getStudentsSorted(String sortOption, int page, int pageSize) {
+        return studentDao.getStudentsSorted(sortOption, page, pageSize);
+    }
+
+    @Override
     public boolean isAccountEmailExist(String email) {
         return studentDao.isAccountEmailExist(email);
+    }
+
+    @Override
+    public boolean checkStudentHasCourses(int id) {
+        return studentDao.checkStudentHasCourses(id);
     }
 
     @Override
@@ -29,11 +55,11 @@ public class StudentServiceImp implements StudentService {
 
     @Override
     public boolean update(Student student) {
-        return false;
+        return studentDao.update(student);
     }
 
     @Override
     public boolean delete(Student student) {
-        return false;
+        return studentDao.delete(student);
     }
 }

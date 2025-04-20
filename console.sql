@@ -203,14 +203,94 @@ end;
 
 create procedure get_students()
 begin
-select s.*, a.email, a.password
+select s.*, a.email, a.password, a.status
 from students s
          left join accounts a on a.id = s.account_id;
+end;
+
+create procedure get_students_by_page(
+    page_size_in int,
+    offset_in int
+)
+begin
+select s.*, a.email, a.password , a.status
+from students s
+         left join accounts a on a.id = s.account_id
+    limit page_size_in offset offset_in;
+end;
+
+create procedure get_student_by_id(id_in int)
+begin
+select s.*, a.email, a.password , a.status
+from students s
+         left join accounts a on a.id = s.account_id
+where s.id = id_in;
+end;
+
+create procedure search_students_by_name(
+    keyword_in varchar(100),
+    page_size_in int,
+    offset_in int,
+    OUT total_records int
+)
+begin
+select count(*)
+into total_records
+from students
+where name like concat('%', keyword_in, '%');
+
+select s.*, a.email, a.password , a.status
+from students s
+         left join accounts a on a.id = s.account_id
+where name like concat('%', keyword_in, '%')
+    limit page_size_in offset offset_in;
+end;
+
+create procedure get_students_sorted_paginated(
+    sort_option varchar(20),
+    page_size_in int,
+    offset_in int
+)
+begin
+    if lower(sort_option) = 'id_asc' then
+select s.*, a.email, a.password , a.status
+from students s
+         left join accounts a on a.id = s.account_id
+order by s.id asc
+    limit page_size_in offset offset_in;
+elseif lower(sort_option) = 'id_desc' then
+select s.*, a.email, a.password , a.status
+from students s
+         left join accounts a on a.id = s.account_id
+order by s.id desc
+    limit page_size_in offset offset_in;
+elseif lower(sort_option) = 'name_asc' then
+select s.*, a.email, a.password , a.status
+from students s
+         left join accounts a on a.id = s.account_id
+order by s.name asc
+    limit page_size_in offset offset_in;
+elseif lower(sort_option) = 'name_desc' then
+select s.*, a.email, a.password , a.status
+from students s
+         left join accounts a on a.id = s.account_id
+order by s.name desc
+    limit page_size_in offset offset_in;
+end if;
 end;
 
 create procedure is_exist_email(email_in varchar(100))
 begin
 select count(*) > 0 as is_exist from accounts where email = email_in;
+end;
+
+create procedure check_student_has_courses(
+    id_in int
+)
+begin
+select count(*) > 0 as has_courses
+from enrollments
+where student_id = id_in;
 end;
 
 create procedure create_student(
@@ -231,5 +311,39 @@ set acc_id = last_insert_id();
 
 insert into students(name, dob, sex, phone, account_id, create_at)
 values (name_in, dob_in, sex_in, phone_in, acc_id, curdate());
+end;
+
+create procedure update_student(
+    id_in int,
+    name_in varchar(100),
+    dob_in date,
+    sex_in bit,
+    phone_in varchar(15),
+    status_in enum('active', 'inactive', 'blocked')
+)
+begin
+update students
+set name = name_in,
+    dob = dob_in,
+    sex = sex_in,
+    phone = phone_in
+where id = id_in;
+
+update accounts
+set status = status_in
+where id = (select students.account_id from students where id = id_in);
+end;
+
+create procedure delete_student(
+    id_in int
+)
+begin
+    declare acc_id int;
+
+select account_id into acc_id
+from students
+where id = id_in;
+
+delete from accounts where id = acc_id;
 end;
 delimiter //

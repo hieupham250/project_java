@@ -53,7 +53,28 @@ public class PaginationUtils<T> {
                 }
             } else if (service instanceof StudentService) {
                 StudentService studentService = (StudentService) service;
-//            data = ((StudentService) service).getStudentByPage(currentPage, PAGE_SIZE);
+                int totalStudents;
+                switch (option) {
+                    case LIST_ALL:
+                        totalStudents = studentService.findAll().size();
+                        totalPages = (int) Math.ceil((double) totalStudents / PAGE_SIZE);
+                        data = studentService.getStudentsByPage(currentPage, PAGE_SIZE);
+                        break;
+                    case SEARCH:
+                        int[] totalRecordsOut = new int[1];
+                        data = studentService.searchStudentsByName(value, currentPage, PAGE_SIZE, totalRecordsOut);
+                        size = totalRecordsOut[0];
+                        totalPages = (int) Math.ceil((double) this.size / PAGE_SIZE);
+                        break;
+                    case SORT:
+                        totalStudents = studentService.findAll().size();
+                        totalPages = (int) Math.ceil((double) totalStudents / PAGE_SIZE);
+                        data = studentService.getStudentsSorted(value, currentPage, PAGE_SIZE);
+                        break;
+                    default:
+                        System.out.println("\u001B[31mTùy chọn phân trang không hợp lệ!\u001B[0m");
+                        return;
+                }
             } else {
                 System.out.println("\u001B[31mLoại dịch vụ không được hỗ trợ!\u001B[0m");
                 return;

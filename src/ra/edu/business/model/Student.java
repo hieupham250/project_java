@@ -1,7 +1,7 @@
 package ra.edu.business.model;
 
 import ra.edu.business.service.student.StudentService;
-import ra.edu.utils.DateUtils;
+import ra.edu.datatype.StatusAccount;
 import ra.edu.validate.StringRule;
 import ra.edu.validate.StudentValidator;
 import ra.edu.validate.Validator;
@@ -17,12 +17,13 @@ public class Student {
     private String password;
     private boolean sex;
     private String phone;
+    private StatusAccount status;
     private int account_id;
     private LocalDate create_at;
 
     public Student() {}
 
-    public Student(int id, String name, LocalDate dob, String email, String password, boolean sex, String phone, int account_id, LocalDate create_at) {
+    public Student(int id, String name, LocalDate dob, String email, String password, boolean sex, String phone, StatusAccount status, int account_id, LocalDate create_at) {
         this.id = id;
         this.name = name;
         this.dob = dob;
@@ -30,6 +31,7 @@ public class Student {
         this.password = password;
         this.sex = sex;
         this.phone = phone;
+        this.status = status;
         this.account_id = account_id;
         this.create_at = create_at;
     }
@@ -88,6 +90,14 @@ public class Student {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public StatusAccount getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusAccount status) {
+        this.status = status;
     }
 
     public int getAccountId() {

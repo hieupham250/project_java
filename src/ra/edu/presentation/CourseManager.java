@@ -138,7 +138,7 @@ public class CourseManager {
     public static void deleteCourse(Scanner sc) {
         List<Course> courses = courseService.findAll();
         if (courses.isEmpty()) {
-            System.out.println("\u001B[31mHiện không có khóa học nào để cập nhật!\u001B[0m");
+            System.out.println("\u001B[31mHiện không có khóa học nào để xóa!\u001B[0m");
             return;
         }
         int id = Validator.validateInputInteger("Nhập mã khóa học muốn xóa: ", sc);
