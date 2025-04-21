@@ -135,7 +135,7 @@ public class CourseDaoImp implements CourseDao {
         try {
             conn = ConnectionDB.openConnection();
             int offset = (page - 1) * pageSize;
-            cstmt = conn.prepareCall("{call get_courses_sorted_paginated(?, ?, ?)}");
+            cstmt = conn.prepareCall("{call get_courses_sorted(?, ?, ?)}");
             cstmt.setString(1, sortOption);
             cstmt.setInt(2, pageSize);
             cstmt.setInt(3, offset);

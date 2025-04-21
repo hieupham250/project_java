@@ -1,11 +1,13 @@
 package ra.edu.utils;
 
 import ra.edu.business.model.Course;
+import ra.edu.business.model.RegisteredCourse;
 import ra.edu.business.model.Student;
 import ra.edu.business.service.course.CourseService;
 import ra.edu.business.service.student.StudentService;
 import ra.edu.datatype.PaginationOption;
 import ra.edu.validate.Validator;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,9 +17,18 @@ public class PaginationUtils<T> {
     private String value;
     private PaginationOption option;
     private T service;
+    private int studentId;
 
+    // Constructor tìm kiếm/sắp xếp
     public PaginationUtils(String value, PaginationOption option, T service) {
         this.value = value;
+        this.option = option;
+        this.service = service;
+    }
+
+    // Constructor hiển thị khóa học đã đăng ký của student
+    public PaginationUtils(int studentId, PaginationOption option, T service) {
+        this.studentId = studentId;
         this.option = option;
         this.service = service;
     }
@@ -42,11 +53,11 @@ public class PaginationUtils<T> {
                         size = totalRecordsOut[0];
                         totalPages = (int) Math.ceil((double) this.size / PAGE_SIZE);
                         break;
-                        case SORT:
-                            totalCourses = courseService.findAll().size();
-                            totalPages = (int) Math.ceil((double) totalCourses / PAGE_SIZE);
-                            data = courseService.getCoursesSorted(value, currentPage, PAGE_SIZE);
-                            break;
+                    case SORT:
+                        totalCourses = courseService.findAll().size();
+                        totalPages = (int) Math.ceil((double) totalCourses / PAGE_SIZE);
+                        data = courseService.getCoursesSorted(value, currentPage, PAGE_SIZE);
+                        break;
                     default:
                         System.out.println("\u001B[31mTùy chọn phân trang không hợp lệ!\u001B[0m");
                         return;
@@ -71,6 +82,12 @@ public class PaginationUtils<T> {
                         totalPages = (int) Math.ceil((double) totalStudents / PAGE_SIZE);
                         data = studentService.getStudentsSorted(value, currentPage, PAGE_SIZE);
                         break;
+                    case COURSE_REGISTERED:
+                        int[] totalRegisteredOut = new int[1];
+                        data = studentService.getMyRegisteredCourses(studentId, currentPage, PAGE_SIZE, totalRegisteredOut);
+                        size = totalRegisteredOut[0];
+                        totalPages = (int) Math.ceil((double) this.size / PAGE_SIZE);
+                        break;
                     default:
                         System.out.println("\u001B[31mTùy chọn phân trang không hợp lệ!\u001B[0m");
                         return;
@@ -87,7 +104,14 @@ public class PaginationUtils<T> {
             if (service instanceof CourseService) {
                 TableUtils.printCoursesTable((List<Course>) data);
             } else if (service instanceof StudentService) {
-                TableUtils.printStudentsTable((List<Student>) data);
+                switch (option) {
+                    case COURSE_REGISTERED:
+                        TableUtils.printRegisteredCoursesTable((List<RegisteredCourse>) data);
+                        break;
+                    default:
+                        TableUtils.printStudentsTable((List<Student>) data);
+                        break;
+                }
             }
             for (int i = 1; i <= totalPages; i++) {
                 if (i == currentPage) {

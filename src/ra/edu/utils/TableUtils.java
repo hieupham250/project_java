@@ -1,6 +1,7 @@
 package ra.edu.utils;
 
 import ra.edu.business.model.Course;
+import ra.edu.business.model.RegisteredCourse;
 import ra.edu.business.model.Student;
 
 import java.util.List;
@@ -18,6 +19,11 @@ public class TableUtils {
             "Mã sinh viên", "Tên sinh viên", "Ngày sinh", "Email", "Giới tính", "Số điện thoại", "Trạng thái", "Ngày tạo"
     );
 
+    private static final String LINE_REGISTERED_COURSE = "+--------------+------------------------------------------+---------------------+-------------+";
+    private static final String HEADER_REGISTERED_COURSE = String.format(
+            "| %-12s | %-40s | %-19s | %-11s |",
+            "Mã khóa học","Tên khóa học", "Ngày đăng ký", "Trạng thái"
+    );
 
     public static void printCoursesTable(List<Course> courses) {
         System.out.println(LINE_COURSE);
@@ -75,5 +81,21 @@ public class TableUtils {
                 student.getCreateAt() != null ? DateUtils.formatDate(student.getCreateAt()) : "N/A"
         );
         System.out.println(LINE_STUDENT);
+    }
+
+    public static void printRegisteredCoursesTable(List<RegisteredCourse> registeredCourses) {
+        System.out.println(LINE_REGISTERED_COURSE);
+        System.out.println(HEADER_REGISTERED_COURSE);
+        System.out.println(LINE_REGISTERED_COURSE);
+        for (RegisteredCourse rc : registeredCourses) {
+            String statusDisplay = rc.getStatus() != null ? rc.getStatus().toVietnamese() : "N/A";
+            System.out.printf("| %-12d | %-40s | %-19s | %-11s |\n",
+                    rc.getCourseId(),
+                    rc.getCourseName(),
+                    rc.getRegisteredAt() != null ? DateUtils.formatDateTime(rc.getRegisteredAt()) : "N/A",
+                    statusDisplay
+            );
+            System.out.println(LINE_REGISTERED_COURSE);
+        }
     }
 }

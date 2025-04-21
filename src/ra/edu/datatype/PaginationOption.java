@@ -3,5 +3,6 @@ package ra.edu.datatype;
 public enum PaginationOption {
     LIST_ALL,
     SEARCH,
-    SORT
+    SORT,
+    COURSE_REGISTERED
 }

@@ -5,6 +5,8 @@ import ra.edu.business.service.course.CourseService;
 import ra.edu.business.service.course.CourseServiceImp;
 import ra.edu.business.service.student.StudentService;
 import ra.edu.business.service.student.StudentServiceImp;
+import ra.edu.datatype.PaginationOption;
+import ra.edu.utils.PaginationUtils;
 import ra.edu.validate.Validator;
 
 import java.util.Scanner;
@@ -36,10 +38,14 @@ public class StudentMenuUI {
                     registerCourse(sc);
                     break;
                 case 4:
+                    displayCourseRegistration(sc);
                     break;
                 case 5:
+                    cancelCourseRegistration(sc);
                     break;
                 case 6:
+                    break;
+                case 7:
                     LoginUI.logout();
                     return;
                 default:
@@ -60,6 +66,28 @@ public class StudentMenuUI {
             System.out.println("\u001B[32mĐăng ký khóa học thành công!\u001B[0m");
         } else {
             System.out.println("\u001B[31mBạn đã đăng ký khóa học này hoặc xảy ra lỗi!\u001B[0m");
+        }
+    }
+
+    public static void displayCourseRegistration(Scanner sc) {
+        Account currentAccount = LoginUI.getLoggedInAccount();
+        int studentId = currentAccount.getStudentId();
+        PaginationUtils<StudentService> pagination = new PaginationUtils<>(studentId, PaginationOption.COURSE_REGISTERED, studentService);
+        pagination.paginate(sc);
+    }
+
+    public static void cancelCourseRegistration(Scanner sc) {
+        int courseId = Validator.validateInputInteger("Nhập mã khóa học muốn hủy đăng ký: ", sc);
+        if (courseService.getCourseById(courseId) == null) {
+            System.out.println("\u001B[31mMã khóa học không tồn tại!\u001B[0m");
+            return;
+        }
+        Account currentAccount = LoginUI.getLoggedInAccount();
+        int studentId = currentAccount.getStudentId();
+        if (studentService.cancelCourseRegistration(studentId, courseId)) {
+            System.out.println("\u001B[32mHủy đăng ký khóa học thành công!\u001B[0m");
+        } else {
+            System.out.println("\u001B[31mHủy đăng ký khóa học không thành công hoặc khóa học đã bắt đầu!\u001B[0m");
         }
     }
 }

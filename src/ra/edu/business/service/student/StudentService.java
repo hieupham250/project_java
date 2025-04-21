@@ -1,5 +1,6 @@
 package ra.edu.business.service.student;
 
+import ra.edu.business.model.RegisteredCourse;
 import ra.edu.business.model.Student;
 import ra.edu.business.service.AppService;
 
@@ -28,5 +29,9 @@ public interface StudentService extends AppService<Student> {
     @Override
     public boolean delete(Student student);
 
+    List<RegisteredCourse> getMyRegisteredCourses(int id, int page, int pageSize, int[] totalRecordsOut);
+
     boolean registerCourse(int studentId, int courseId);
+
+    public boolean cancelCourseRegistration(int studentId, int courseId);
 }

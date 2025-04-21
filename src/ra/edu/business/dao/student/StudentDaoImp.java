@@ -2,7 +2,9 @@ package ra.edu.business.dao.student;
 
 import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.Student;
+import ra.edu.business.model.RegisteredCourse;
 import ra.edu.datatype.StatusAccount;
+import ra.edu.datatype.StatusEnrollment;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -156,7 +158,7 @@ public class StudentDaoImp implements StudentDao{
         try {
             conn = ConnectionDB.openConnection();
             int offset = (page - 1) * pageSize;
-            cstmt = conn.prepareCall("{call get_students_sorted_paginated(?, ?, ?)}");
+            cstmt = conn.prepareCall("{call get_students_sorted(?, ?, ?)}");
             cstmt.setString(1, sortOption);
             cstmt.setInt(2, pageSize);
             cstmt.setInt(3, offset);
@@ -271,6 +273,41 @@ public class StudentDaoImp implements StudentDao{
     }
 
     @Override
+    public List<RegisteredCourse> getMyRegisteredCourses(int id, int page, int pageSize, int[] totalRecordsOut) {
+        List<RegisteredCourse> registeredCourses = new ArrayList<>();
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            int offset = (page - 1) * pageSize;
+            cstmt = conn.prepareCall("{call get_my_registered_courses(?, ?, ?, ?)}");
+            cstmt.setInt(1, id);
+            cstmt.setInt(2, pageSize);
+            cstmt.setInt(3, offset);
+            cstmt.registerOutParameter(4, Types.INTEGER);
+            boolean hasResultSet = cstmt.execute();
+            if (hasResultSet) {
+                ResultSet rs = cstmt.getResultSet();
+                while (rs.next()) {
+                    RegisteredCourse course = new RegisteredCourse(
+                            rs.getInt("course_id"),
+                            rs.getString("course_name"),
+                            rs.getTimestamp("registered_at"),
+                            StatusEnrollment.valueOf(rs.getString("status"))
+                    );
+                    registeredCourses.add(course);
+                }
+            }
+            totalRecordsOut[0] = cstmt.getInt(4);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return registeredCourses;
+    }
+
+    @Override
     public boolean registerCourse(int studentId, int courseId) {
         Connection conn = null;
         CallableStatement stmt = null;
@@ -289,5 +326,27 @@ public class StudentDaoImp implements StudentDao{
             ConnectionDB.closeConnection(conn, stmt);
         }
         return isSuccess;
+    }
+
+    @Override
+    public boolean cancelCourseRegistration(int studentId, int courseId) {
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        boolean isCanceled = false;
+        try {
+            conn = ConnectionDB.openConnection();
+            cstmt = conn.prepareCall("{call cancel_course_registration(?, ?, ?)}");
+            cstmt.setInt(1, studentId);
+            cstmt.setInt(2, courseId);
+            cstmt.registerOutParameter(3, Types.BOOLEAN);
+            cstmt.execute();
+            isCanceled = cstmt.getBoolean(3);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return isCanceled;
     }
 }
