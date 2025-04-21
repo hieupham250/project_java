@@ -29,8 +29,8 @@ public class StudentServiceImp implements StudentService {
     }
 
     @Override
-    public List<Student> searchStudentsByName(String name, int page, int pageSize, int[] totalRecordsOut) {
-        return studentDao.searchStudentsByName(name, page, pageSize, totalRecordsOut);
+    public List<Student> searchStudents(String name, int page, int pageSize, int[] totalRecordsOut) {
+        return studentDao.searchStudents(name, page, pageSize, totalRecordsOut);
     }
 
     @Override

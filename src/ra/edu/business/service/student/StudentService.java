@@ -13,7 +13,7 @@ public interface StudentService extends AppService<Student> {
 
     Student getStudentById(int id);
 
-    List<Student> searchStudentsByName(String name, int page, int pageSize, int[] totalRecordsOut);
+    List<Student> searchStudents(String name, int page, int pageSize, int[] totalRecordsOut);
 
     List<Student> getStudentsSorted(String sortOption, int page, int pageSize);
 

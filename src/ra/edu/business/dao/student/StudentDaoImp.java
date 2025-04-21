@@ -109,14 +109,14 @@ public class StudentDaoImp implements StudentDao{
     }
 
     @Override
-    public List<Student> searchStudentsByName(String keyword, int page, int pageSize, int[] totalRecordsOut) {
+    public List<Student> searchStudents(String keyword, int page, int pageSize, int[] totalRecordsOut) {
         List<Student> students = new ArrayList<Student>();
         Connection conn = null;
         CallableStatement cstmt = null;
         try {
             conn = ConnectionDB.openConnection();
             int offset = (page - 1) * pageSize;
-            cstmt = conn.prepareCall("{call search_students_by_name(?, ?, ?, ?)}");
+            cstmt = conn.prepareCall("{call search_students_by_name_or_email(?, ?, ?, ?)}");
             cstmt.setString(1, keyword);
             cstmt.setInt(2, pageSize);
             cstmt.setInt(3, offset);

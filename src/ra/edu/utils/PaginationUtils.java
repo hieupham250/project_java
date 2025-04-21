@@ -62,7 +62,7 @@ public class PaginationUtils<T> {
                         break;
                     case SEARCH:
                         int[] totalRecordsOut = new int[1];
-                        data = studentService.searchStudentsByName(value, currentPage, PAGE_SIZE, totalRecordsOut);
+                        data = studentService.searchStudents(value, currentPage, PAGE_SIZE, totalRecordsOut);
                         size = totalRecordsOut[0];
                         totalPages = (int) Math.ceil((double) this.size / PAGE_SIZE);
                         break;
