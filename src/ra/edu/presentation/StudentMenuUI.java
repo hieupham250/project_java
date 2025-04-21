@@ -23,8 +23,9 @@ public class StudentMenuUI {
             System.out.println(" 3. Đăng ký khóa học");
             System.out.println(" 4. Xem khóa học đã đăng ký");
             System.out.println(" 5. Hủy đăng ký (nếu chưa bắt đầu)");
-            System.out.println(" 6. Đổi mật khẩu");
-            System.out.println(" 7. Đăng xuất");
+            System.out.println(" 6. Sắp xếp khóa học");
+            System.out.println(" 7. Đổi mật khẩu");
+            System.out.println(" 8. Đăng xuất");
             System.out.println("=================================");
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
@@ -46,6 +47,8 @@ public class StudentMenuUI {
                 case 6:
                     break;
                 case 7:
+                    break;
+                case 8:
                     LoginUI.logout();
                     return;
                 default:

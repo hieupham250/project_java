@@ -1,7 +1,8 @@
 package ra.edu.utils;
 
 import ra.edu.business.model.Course;
-import ra.edu.business.model.RegisteredCourse;
+import ra.edu.business.model.RegisteredCourseInfo;
+import ra.edu.business.model.RegisteredStudentInfo;
 import ra.edu.business.model.Student;
 
 import java.util.List;
@@ -17,6 +18,12 @@ public class TableUtils {
     private static final String HEADER_STUDENT = String.format(
             "| %-12s | %-23s | %-10s | %-23s | %-9s | %-15s | %-15s | %-12s |",
             "Mã sinh viên", "Tên sinh viên", "Ngày sinh", "Email", "Giới tính", "Số điện thoại", "Trạng thái", "Ngày tạo"
+    );
+
+    public static final String LINE_REG_ADMIN_STUDENT_INFO  = "+------------+---------------------+----------------------------+--------------------+------------+---------------------------+---------------------+------------------+";
+    public static final String HEADER_REG_ADMIN_STUDENT_INFO = String.format(
+            "| %-10s | %-19s | %-26s | %-18s | %-10s | %-25s | %-19s | %-16s |",
+            "Mã HV", "Tên sinh viên", "Email", "Số điện thoại", "Mã KH", "Tên khóa học", "Ngày đăng ký", "Trạng thái"
     );
 
     private static final String LINE_REGISTERED_COURSE = "+--------------+------------------------------------------+---------------------+-------------+";
@@ -83,11 +90,32 @@ public class TableUtils {
         System.out.println(LINE_STUDENT);
     }
 
-    public static void printRegisteredCoursesTable(List<RegisteredCourse> registeredCourses) {
+    public static void printAdminRegStudentTable(List<RegisteredStudentInfo> registeredStudents) {
+        System.out.println(LINE_REG_ADMIN_STUDENT_INFO);
+        System.out.println(HEADER_REG_ADMIN_STUDENT_INFO);
+        System.out.println(LINE_REG_ADMIN_STUDENT_INFO);
+        for (RegisteredStudentInfo info : registeredStudents) {
+            System.out.println("CourseId: " + info.getCourseId());
+            String statusDisplay = info.getStatus() != null ? info.getStatus().toVietnamese() : "N/A";
+            System.out.printf("| %-10d | %-19s | %-26s | %-18s | %-10d | %-25s | %-19s | %-16s |\n",
+                    info.getStudentId(),
+                    info.getNameStudent(),
+                    info.getEmail(),
+                    info.getPhone() != null ? info.getPhone() : "N/A",
+                    info.getCourseId(),
+                    info.getNameCourse(),
+                    info.getRegisteredAt() != null ? DateUtils.formatDateTime(info.getRegisteredAt()) : "N/A",
+                    statusDisplay
+            );
+            System.out.println(LINE_REG_ADMIN_STUDENT_INFO);
+        }
+    }
+
+    public static void printRegisteredCoursesTable(List<RegisteredCourseInfo> registeredCourses) {
         System.out.println(LINE_REGISTERED_COURSE);
         System.out.println(HEADER_REGISTERED_COURSE);
         System.out.println(LINE_REGISTERED_COURSE);
-        for (RegisteredCourse rc : registeredCourses) {
+        for (RegisteredCourseInfo rc : registeredCourses) {
             String statusDisplay = rc.getStatus() != null ? rc.getStatus().toVietnamese() : "N/A";
             System.out.printf("| %-12d | %-40s | %-19s | %-11s |\n",
                     rc.getCourseId(),

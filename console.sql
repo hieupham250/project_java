@@ -109,7 +109,8 @@ begin
 SELECT a.*, s.id as student_id
 from accounts a
          left join students s on a.id = s.account_id
-where email = email_in and password = password_in;
+where email = email_in
+  and password = password_in;
 end;
 
 create procedure get_courses()
@@ -148,7 +149,7 @@ where name like concat('%', keyword_in, '%')
     limit page_size_in offset offset_in;
 end;
 
-create procedure get_courses_sorted_paginated(
+create procedure get_courses_sorted(
     sort_option varchar(20),
     page_size_in int,
     offset_in int
@@ -200,7 +201,8 @@ create procedure delete_course(
 )
 begin
     declare student_count int;
-select count(*) into student_count
+select count(*)
+into student_count
 from enrollments
 where course_id = id_in;
 
@@ -260,9 +262,7 @@ where name like concat('%', keyword_in, '%')
     limit page_size_in offset offset_in;
 end;
 
-create
-
-create procedure get_students_sorted_paginated(
+create procedure get_students_sorted(
     sort_option varchar(20),
     page_size_in int,
     offset_in int
@@ -354,7 +354,8 @@ into acc_id
 from students
 where id = id_in;
 
-select count(*) into course_count
+select count(*)
+into course_count
 from enrollments
 where student_id = id_in;
 
@@ -366,6 +367,26 @@ set is_deleted = true;
 end if;
 end;
 
+create procedure get_my_registered_courses(
+    student_id_in int,
+    page_size_in int,
+    offset_in int,
+    OUT total_records int
+)
+begin
+select count(*)
+into total_records
+from enrollments e
+         join courses c on e.course_id = c.id
+where e.student_id = student_id_in;
+
+select c.id as course_id, c.name as course_name, e.registered_at, e.status
+from enrollments e
+         join courses c on e.course_id = c.id
+where e.student_id = student_id_in
+    limit page_size_in offset offset_in;
+end;
+
 create procedure register_course(
     student_id_in int,
     course_id_in int,
@@ -374,9 +395,11 @@ create procedure register_course(
 begin
     declare count_check int default 0;
 
-select count(*) into count_check
+select count(*)
+into count_check
 from enrollments
-where student_id = student_id_in and course_id = course_id_in;
+where student_id = student_id_in
+  and course_id = course_id_in;
 
 if count_check > 0 then
         set is_success = false;
@@ -384,6 +407,144 @@ else
         insert into enrollments(student_id, course_id)
         values (student_id_in, course_id_in);
         set is_success = true;
+end if;
+end;
+
+create procedure cancel_course_registration(
+    student_id_in int,
+    course_id_in int,
+    OUT is_canceled boolean
+)
+begin
+    declare enrollment_count int;
+    declare current_status varchar(20);
+
+    -- Kiểm tra xem học viên đã đăng ký khóa học này chưa
+select count(*)
+into enrollment_count
+from enrollments
+where student_id = student_id_in
+  and course_id = course_id_in;
+
+-- Nếu học viên đã đăng ký khóa học, kiểm tra trạng thái
+if enrollment_count > 0 then
+        -- Lấy trạng thái hiện tại của đăng ký
+select status
+into current_status
+from enrollments
+where student_id = student_id_in
+  and course_id = course_id_in;
+
+-- Nếu trạng thái là 'CONFIRM', không cho phép hủy
+if current_status = 'CONFIRM' then
+            set is_canceled = false;
+else
+            -- Nếu không phải trạng thái 'CONFIRM', thực hiện hủy đăng ký
+update enrollments
+set status = 'CANCEL'
+where student_id = student_id_in
+  and course_id = course_id_in;
+set is_canceled = true;
+end if;
+else
+        set is_canceled = false;
+end if;
+end;
+
+create procedure get_registered_students_by_course(
+    course_id_in int,
+    page_size_in int,
+    offset_in int,
+    OUT total_records int
+)
+begin
+    -- Đếm tổng số bản ghi
+select count(*)
+into total_records
+from enrollments e
+         join students s on e.student_id = s.id
+         join accounts a on s.account_id = a.id
+where e.course_id = course_id_in;
+
+-- Truy vấn danh sách sinh viên đăng ký
+select s.id as studentId,
+       s.name as nameStudent,
+       a.email,
+       s.phone,
+       c.id as courseId,
+       c.name as nameCourse,
+       e.registered_at,
+       e.status
+from enrollments e
+         join students s on e.student_id = s.id
+         join accounts a on s.account_id = a.id
+         join courses c on e.course_id = c.id
+where e.course_id = course_id_in
+    limit page_size_in offset offset_in;
+
+end;
+
+create procedure approve_or_deny_registration(
+    student_id_in int,
+    course_id_in int,
+    new_status varchar(20)
+)
+begin
+update enrollments
+set status = new_status
+where student_id = student_id_in
+  and course_id = course_id_in
+  and status = 'WAITING';
+end;
+
+create procedure delete_enrollment(
+    student_id_in int,
+    course_id_in int
+)
+begin
+delete
+from enrollments
+where student_id = student_id_in
+  and course_id = course_id_in
+  and status in ('DENIED', 'CANCEL');
+end;
+
+-- chưa hoàn thành
+create procedure get_my_enrollments_sorted(
+    student_id_in int,
+    sort_option varchar(20),
+    page_size_in int,
+    offset_in int
+)
+begin
+    if lower(sort_option) = 'name_asc' then
+select c.name as course_name, e.registered_at, e.status
+from enrollments e
+         join courses c on e.course_id = c.id
+where e.student_id = student_id_in
+order by c.name asc
+    limit page_size_in offset offset_in;
+elseif lower(sort_option) = 'name_desc' then
+select c.name as course_name, e.registered_at, e.status
+from enrollments e
+         join courses c on e.course_id = c.id
+where e.student_id = student_id_in
+order by c.name desc
+    limit page_size_in offset offset_in;
+elseif lower(sort_option) = 'registration_asc' then
+select c.name as course_name, e.registered_at, e.status
+from enrollments e
+         join courses c on e.course_id = c.id
+where e.student_id = student_id_in
+order by e.registered_at asc
+    limit page_size_in offset offset_in;
+elseif lower(sort_option) = 'registration_desc' then
+select c.name as course_name, e.registered_at, e.status
+from enrollments e
+         join courses c on e.course_id = c.id
+where e.student_id = student_id_in
+order by e.registered_at desc
+    limit page_size_in offset offset_in;
 end if;
 end;
 delimiter //

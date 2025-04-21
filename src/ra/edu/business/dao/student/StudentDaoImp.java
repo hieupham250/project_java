@@ -2,7 +2,7 @@ package ra.edu.business.dao.student;
 
 import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.Student;
-import ra.edu.business.model.RegisteredCourse;
+import ra.edu.business.model.RegisteredCourseInfo;
 import ra.edu.datatype.StatusAccount;
 import ra.edu.datatype.StatusEnrollment;
 
@@ -273,8 +273,8 @@ public class StudentDaoImp implements StudentDao{
     }
 
     @Override
-    public List<RegisteredCourse> getMyRegisteredCourses(int id, int page, int pageSize, int[] totalRecordsOut) {
-        List<RegisteredCourse> registeredCourses = new ArrayList<>();
+    public List<RegisteredCourseInfo> getMyRegisteredCourses(int id, int page, int pageSize, int[] totalRecordsOut) {
+        List<RegisteredCourseInfo> registeredCourses = new ArrayList<>();
         Connection conn = null;
         CallableStatement cstmt = null;
         try {
@@ -289,7 +289,7 @@ public class StudentDaoImp implements StudentDao{
             if (hasResultSet) {
                 ResultSet rs = cstmt.getResultSet();
                 while (rs.next()) {
-                    RegisteredCourse course = new RegisteredCourse(
+                    RegisteredCourseInfo course = new RegisteredCourseInfo(
                             rs.getInt("course_id"),
                             rs.getString("course_name"),
                             rs.getTimestamp("registered_at"),

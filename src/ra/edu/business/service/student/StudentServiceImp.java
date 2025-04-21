@@ -2,7 +2,7 @@ package ra.edu.business.service.student;
 
 import ra.edu.business.dao.student.StudentDao;
 import ra.edu.business.dao.student.StudentDaoImp;
-import ra.edu.business.model.RegisteredCourse;
+import ra.edu.business.model.RegisteredCourseInfo;
 import ra.edu.business.model.Student;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class StudentServiceImp implements StudentService {
     }
 
     @Override
-    public List<RegisteredCourse> getMyRegisteredCourses(int id, int page, int pageSize, int[] totalRecordsOut) {
+    public List<RegisteredCourseInfo> getMyRegisteredCourses(int id, int page, int pageSize, int[] totalRecordsOut) {
         return studentDao.getMyRegisteredCourses(id, page, pageSize, totalRecordsOut);
     }
 

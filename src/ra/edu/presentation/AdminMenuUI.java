@@ -23,6 +23,7 @@ public class AdminMenuUI {
                     StudentManager.menuStudentManager(sc);
                     break;
                 case 3:
+                    EnrollmentManager.menuEnrollmentManager(sc);
                     break;
                 case 4:
                     break;

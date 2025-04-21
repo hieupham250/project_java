@@ -4,15 +4,15 @@ import ra.edu.datatype.StatusEnrollment;
 
 import java.sql.Timestamp;
 
-public class RegisteredCourse {
+public class RegisteredCourseInfo {
     private int courseId;
     private String courseName;
     private Timestamp registeredAt;
     private StatusEnrollment status;
 
-    public RegisteredCourse() {}
+    public RegisteredCourseInfo() {}
 
-    public RegisteredCourse(int courseId, String courseName, Timestamp registeredAt, StatusEnrollment status) {
+    public RegisteredCourseInfo(int courseId, String courseName, Timestamp registeredAt, StatusEnrollment status) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.registeredAt = registeredAt;

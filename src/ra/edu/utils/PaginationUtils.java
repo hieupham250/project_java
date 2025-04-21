@@ -1,9 +1,11 @@
 package ra.edu.utils;
 
 import ra.edu.business.model.Course;
-import ra.edu.business.model.RegisteredCourse;
+import ra.edu.business.model.RegisteredCourseInfo;
+import ra.edu.business.model.RegisteredStudentInfo;
 import ra.edu.business.model.Student;
 import ra.edu.business.service.course.CourseService;
+import ra.edu.business.service.enrollment.EnrollmentService;
 import ra.edu.business.service.student.StudentService;
 import ra.edu.datatype.PaginationOption;
 import ra.edu.validate.Validator;
@@ -17,7 +19,7 @@ public class PaginationUtils<T> {
     private String value;
     private PaginationOption option;
     private T service;
-    private int studentId;
+    private int id;
 
     // Constructor tìm kiếm/sắp xếp
     public PaginationUtils(String value, PaginationOption option, T service) {
@@ -26,9 +28,8 @@ public class PaginationUtils<T> {
         this.service = service;
     }
 
-    // Constructor hiển thị khóa học đã đăng ký của student
-    public PaginationUtils(int studentId, PaginationOption option, T service) {
-        this.studentId = studentId;
+    public PaginationUtils(int id, PaginationOption option, T service) {
+        this.id = id;
         this.option = option;
         this.service = service;
     }
@@ -82,9 +83,9 @@ public class PaginationUtils<T> {
                         totalPages = (int) Math.ceil((double) totalStudents / PAGE_SIZE);
                         data = studentService.getStudentsSorted(value, currentPage, PAGE_SIZE);
                         break;
-                    case COURSE_REGISTERED:
+                    case COURSE_REGISTERED: // xem khóa học đã đăng ký của học viên
                         int[] totalRegisteredOut = new int[1];
-                        data = studentService.getMyRegisteredCourses(studentId, currentPage, PAGE_SIZE, totalRegisteredOut);
+                        data = studentService.getMyRegisteredCourses(id, currentPage, PAGE_SIZE, totalRegisteredOut);
                         size = totalRegisteredOut[0];
                         totalPages = (int) Math.ceil((double) this.size / PAGE_SIZE);
                         break;
@@ -92,7 +93,21 @@ public class PaginationUtils<T> {
                         System.out.println("\u001B[31mTùy chọn phân trang không hợp lệ!\u001B[0m");
                         return;
                 }
-            } else {
+            } else if (service instanceof EnrollmentService) {
+                EnrollmentService enrollmentService = (EnrollmentService) service;
+                switch (option) {
+                    case COURSE_STUDENT_REGISTERED: // xem tất cả học viên theo khóa
+                        int[] totalCourseStudentsOut = new int[1];
+                        data = enrollmentService.getRegisteredStudentsByCourse(id, currentPage, PAGE_SIZE, totalCourseStudentsOut);
+                        size = totalCourseStudentsOut[0];
+                        totalPages = (int) Math.ceil((double) this.size / PAGE_SIZE);
+                        break;
+                    default:
+                        System.out.println("\u001B[31mTùy chọn phân trang không hợp lệ!\u001B[0m");
+                        return;
+                }
+            }
+            else {
                 System.out.println("\u001B[31mLoại dịch vụ không được hỗ trợ!\u001B[0m");
                 return;
             }
@@ -106,12 +121,14 @@ public class PaginationUtils<T> {
             } else if (service instanceof StudentService) {
                 switch (option) {
                     case COURSE_REGISTERED:
-                        TableUtils.printRegisteredCoursesTable((List<RegisteredCourse>) data);
+                        TableUtils.printRegisteredCoursesTable((List<RegisteredCourseInfo>) data);
                         break;
                     default:
                         TableUtils.printStudentsTable((List<Student>) data);
                         break;
                 }
+            } else if (service instanceof EnrollmentService) {
+                TableUtils.printAdminRegStudentTable((List<RegisteredStudentInfo>) data);
             }
             for (int i = 1; i <= totalPages; i++) {
                 if (i == currentPage) {

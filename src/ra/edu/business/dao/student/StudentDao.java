@@ -2,7 +2,7 @@ package ra.edu.business.dao.student;
 
 import ra.edu.business.dao.AppDao;
 import ra.edu.business.model.Student;
-import ra.edu.business.model.RegisteredCourse;
+import ra.edu.business.model.RegisteredCourseInfo;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public interface StudentDao extends AppDao<Student> {
     @Override
     public boolean delete(Student student);
 
-    List<RegisteredCourse> getMyRegisteredCourses(int id, int page, int pageSize, int[] totalRecordsOut);
+    List<RegisteredCourseInfo> getMyRegisteredCourses(int id, int page, int pageSize, int[] totalRecordsOut);
 
     public boolean registerCourse(int studentId, int courseId);
 
