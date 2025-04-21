@@ -106,7 +106,10 @@ create procedure login(
     password_in varchar(255)
 )
 begin
-SELECT * from accounts where email = email_in and password = password_in;
+SELECT a.*, s.id as student_id
+from accounts a
+         left join students s on a.id = s.account_id
+where email = email_in and password = password_in;
 end;
 
 create procedure get_courses()
@@ -167,11 +170,6 @@ begin
 select count(*) > 0 as is_exist from courses where name = name_in;
 end;
 
-create procedure check_course_has_students(course_id_in int)
-begin
-select count(*) > 0 as has_students from enrollments where course_id = course_id_in;
-end;
-
 create procedure create_course(
     name_in varchar(100),
     duration_in int,
@@ -196,9 +194,22 @@ set name       = name_in,
 where id = id_in;
 end;
 
-create procedure delete_course(id_in int)
+create procedure delete_course(
+    id_in int,
+    OUT is_deleted boolean
+)
 begin
+    declare student_count int;
+select count(*) into student_count
+from enrollments
+where course_id = id_in;
+
+if student_count > 0 then
+        set is_deleted = false;
+else
 delete from courses where id = id_in;
+set is_deleted = true;
+end if;
 end;
 
 create procedure get_students()
@@ -289,15 +300,6 @@ begin
 select count(*) > 0 as is_exist from accounts where email = email_in;
 end;
 
-create procedure check_student_has_courses(
-    id_in int
-)
-begin
-select count(*) > 0 as has_courses
-from enrollments
-where student_id = id_in;
-end;
-
 create procedure create_student(
     name_in varchar(100),
     dob_in date,
@@ -340,16 +342,48 @@ where id = (select students.account_id from students where id = id_in);
 end;
 
 create procedure delete_student(
-    id_in int
+    id_in int,
+    OUT is_deleted boolean
 )
 begin
     declare acc_id int;
+    declare course_count int;
 
 select account_id
 into acc_id
 from students
 where id = id_in;
 
+select count(*) into course_count
+from enrollments
+where student_id = id_in;
+
+if course_count > 0 then
+        set is_deleted = false;
+else
 delete from accounts where id = acc_id;
+set is_deleted = true;
+end if;
+end;
+
+create procedure register_course(
+    student_id_in int,
+    course_id_in int,
+    OUT is_success boolean
+)
+begin
+    declare count_check int default 0;
+
+select count(*) into count_check
+from enrollments
+where student_id = student_id_in and course_id = course_id_in;
+
+if count_check > 0 then
+        set is_success = false;
+else
+        insert into enrollments(student_id, course_id)
+        values (student_id_in, course_id_in);
+        set is_success = true;
+end if;
 end;
 delimiter //

@@ -156,14 +156,10 @@ public class CourseManager {
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:
-                    if (courseService.checkCourseHasStudents(id)) {
-                        System.out.println("\u001B[31mKhông thể xóa khóa học vì đã có sinh viên tham gia!\u001B[0m");
-                        return;
-                    }
                     if (courseService.delete(existingCourse)) {
                         System.out.println("\u001B[32mKhóa học đã được xóa thành công!\u001B[0m");
                     } else {
-                        System.out.println("\u001B[31mLỗi khi xóa khóa học!\u001B[0m");
+                        System.out.println("\u001B[31mKhông thể xóa khóa học vì đã có sinh viên tham gia!\u001B[0m");
                     }
                     return;
                 case 2:

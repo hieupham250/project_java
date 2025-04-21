@@ -19,8 +19,6 @@ public interface StudentService extends AppService<Student> {
 
     boolean isAccountEmailExist(String email);
 
-    boolean checkStudentHasCourses(int id);
-
     @Override
     public boolean create(Student student);
 

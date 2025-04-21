@@ -19,8 +19,6 @@ public interface StudentDao extends AppDao<Student> {
 
     boolean isAccountEmailExist(String email);
 
-    boolean checkStudentHasCourses(int id);
-
     @Override
     public boolean create(Student student);
 

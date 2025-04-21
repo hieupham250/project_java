@@ -205,26 +205,6 @@ public class StudentDaoImp implements StudentDao{
     }
 
     @Override
-    public boolean checkStudentHasCourses(int id) {
-        Connection conn = null;
-        CallableStatement cstmt = null;
-        try {
-            conn = ConnectionDB.openConnection();
-            cstmt = conn.prepareCall("{call check_student_has_courses(?)}");
-            cstmt.setInt(1, id);
-            ResultSet rs = cstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("has_courses") == 1;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            ConnectionDB.closeConnection(conn, cstmt);
-        }
-        return false;
-    }
-
-    @Override
     public boolean create(Student student) {
         Connection conn = null;
         CallableStatement cstmt = null;
@@ -274,18 +254,20 @@ public class StudentDaoImp implements StudentDao{
     public boolean delete(Student student) {
         Connection conn = null;
         CallableStatement cstmt = null;
+        boolean isDeleted = false;
         try {
             conn = ConnectionDB.openConnection();
-            cstmt = conn.prepareCall("{call delete_student(?)}");
+            cstmt = conn.prepareCall("{call delete_student(?, ?)}");
             cstmt.setInt(1, student.getId());
-            int result = cstmt.executeUpdate();
-            return result > 0;
+            cstmt.registerOutParameter(2, Types.BOOLEAN);
+            cstmt.execute();
+            isDeleted = cstmt.getBoolean(2);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             ConnectionDB.closeConnection(conn, cstmt);
         }
-        return false;
+        return isDeleted;
     }
 
     @Override

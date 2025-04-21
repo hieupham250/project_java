@@ -19,8 +19,6 @@ public interface CourseService extends AppService<Course> {
 
     boolean isCourseNameExist(String name);
 
-    boolean checkCourseHasStudents(int id);
-
     @Override
     boolean create(Course course);
 

@@ -142,6 +142,14 @@ public class Student {
                 System.out.println("\u001B[31mEmail không hợp lệ. Vui lòng nhập lại!\u001B[0m");
             }
         }
-        this.password = Validator.validateInputString("Nhập mật khẩu: ", sc, new StringRule(255, "Mật khẩu không được để trống!"));
+        while (true) {
+            String password = Validator.validateInputString("Nhập mật khẩu: ", sc, new StringRule(255, "Mật khẩu không được để trống!"));
+            if (password.length() < 6) {
+                System.out.println("\u001B[31mMật khẩu quá ngắn. Vui lòng nhập lại!\u001B[0m");
+            } else {
+                this.password = password;
+                break;
+            }
+        }
     }
 }

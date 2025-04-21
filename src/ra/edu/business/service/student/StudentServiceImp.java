@@ -44,11 +44,6 @@ public class StudentServiceImp implements StudentService {
     }
 
     @Override
-    public boolean checkStudentHasCourses(int id) {
-        return studentDao.checkStudentHasCourses(id);
-    }
-
-    @Override
     public boolean create(Student student) {
         return studentDao.create(student);
     }

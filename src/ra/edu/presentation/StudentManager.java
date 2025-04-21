@@ -82,7 +82,7 @@ public class StudentManager {
             System.out.println("\u001B[31mHiện không có học viên nào để cập nhật!\u001B[0m");
             return;
         }
-        int id = Validator.validateInputInteger("Nhập mã học viên muốn cập nhật", sc);
+        int id = Validator.validateInputInteger("Nhập mã học viên muốn cập nhật: ", sc);
         Student existingStudent = studentService.getStudentById(id);
         if (existingStudent == null) {
             System.out.println("\u001B[31mMã học viên không tồn tại!\u001B[0m");
@@ -198,14 +198,10 @@ public class StudentManager {
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:
-                    if (studentService.checkStudentHasCourses(id)) {
-                        System.out.println("\u001B[31mKhông thể xóa học viên này vì đã tham gia một khóa học!\u001B[0m");
-                        return;
-                    }
                     if (studentService.delete(existingStudent)) {
                         System.out.println("\u001B[32mHọc viên đã được xóa thành công!\u001B[0m");
                     } else {
-                        System.out.println("\u001B[31mLỗi khi xóa học viên!\u001B[0m");
+                        System.out.println("\u001B[31mKhông thể xóa học viên này vì đã tham gia một khóa học!\u001B[0m");
                     }
                     return;
                 case 2:

@@ -178,25 +178,6 @@ public class CourseDaoImp implements CourseDao {
         return false;
     }
 
-    public boolean checkCourseHasStudents(int id) {
-        Connection conn = null;
-        CallableStatement cstmt = null;
-        try {
-            conn = ConnectionDB.openConnection();
-            cstmt = conn.prepareCall("{call check_course_has_students(?)}");
-            cstmt.setInt(1, id);
-            ResultSet rs = cstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("has_students") == 1;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            ConnectionDB.closeConnection(conn, cstmt);
-        }
-        return false;
-    }
-
     @Override
     public boolean create(Course course) {
         Connection conn = null;
@@ -242,17 +223,20 @@ public class CourseDaoImp implements CourseDao {
     public boolean delete(Course course) {
         Connection conn = null;
         CallableStatement cstmt = null;
+        boolean isDeleted = false;
         try {
             conn = ConnectionDB.openConnection();
-            cstmt = conn.prepareCall("{call delete_course(?)}");
+            cstmt = conn.prepareCall("{call delete_course(?,?)}");
             cstmt.setInt(1, course.getId());
-            int result = cstmt.executeUpdate();
-            return result > 0;
+            cstmt.registerOutParameter(2, Types.BOOLEAN);
+            cstmt.execute();
+            isDeleted = cstmt.getBoolean(2);
+            return isDeleted;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             ConnectionDB.closeConnection(conn, cstmt);
         }
-        return false;
+        return isDeleted;
     }
 }
