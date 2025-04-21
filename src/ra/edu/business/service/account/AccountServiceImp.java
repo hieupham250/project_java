@@ -15,9 +15,4 @@ public class AccountServiceImp implements AccountService {
     public Account login(String email, String password) {
         return accountDao.login(email, password);
     }
-
-    @Override
-    public void logout() {
-        accountDao.logout();
-    }
 }

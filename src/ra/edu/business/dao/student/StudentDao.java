@@ -29,4 +29,6 @@ public interface StudentDao extends AppDao<Student> {
 
     @Override
     public boolean delete(Student student);
+
+    public boolean registerCourse(int studentId, int courseId);
 }

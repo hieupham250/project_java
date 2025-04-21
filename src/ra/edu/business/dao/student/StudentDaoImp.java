@@ -287,4 +287,25 @@ public class StudentDaoImp implements StudentDao{
         }
         return false;
     }
+
+    @Override
+    public boolean registerCourse(int studentId, int courseId) {
+        Connection conn = null;
+        CallableStatement stmt = null;
+        boolean isSuccess = false;
+        try {
+            conn = ConnectionDB.openConnection();
+            stmt = conn.prepareCall("{call register_course(?, ?, ?)}");
+            stmt.setInt(1, studentId);
+            stmt.setInt(2, courseId);
+            stmt.registerOutParameter(3, Types.BOOLEAN);
+            stmt.execute();
+            isSuccess = stmt.getBoolean(3);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, stmt);
+        }
+        return isSuccess;
+    }
 }

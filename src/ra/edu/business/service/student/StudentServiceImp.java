@@ -62,4 +62,9 @@ public class StudentServiceImp implements StudentService {
     public boolean delete(Student student) {
         return studentDao.delete(student);
     }
+
+    @Override
+    public boolean registerCourse(int studentId, int courseId) {
+        return studentDao.registerCourse(studentId, courseId);
+    }
 }

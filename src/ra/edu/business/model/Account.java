@@ -14,6 +14,7 @@ public class Account implements IApp {
     private String password;
     private Role role;
     private StatusAccount status;
+    private int studentId;
 
     public Account() {}
 
@@ -63,6 +64,14 @@ public class Account implements IApp {
 
     public void setStatus(StatusAccount status) {
         this.status = status;
+    }
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
     }
 
     @Override

@@ -29,4 +29,6 @@ public interface StudentService extends AppService<Student> {
 
     @Override
     public boolean delete(Student student);
+
+    boolean registerCourse(int studentId, int courseId);
 }
