@@ -73,4 +73,9 @@ public class StudentServiceImp implements StudentService {
     public boolean cancelCourseRegistration(int studentId, int courseId) {
         return studentDao.cancelCourseRegistration(studentId, courseId);
     }
+
+    @Override
+    public boolean updatePassword(int studentId, String newPassword) {
+        return studentDao.updatePassword(studentId, newPassword);
+    }
 }

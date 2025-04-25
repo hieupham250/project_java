@@ -34,4 +34,6 @@ public interface StudentService extends AppService<Student> {
     boolean registerCourse(int studentId, int courseId);
 
     public boolean cancelCourseRegistration(int studentId, int courseId);
+
+    boolean updatePassword(int studentId, String newPassword);
 }

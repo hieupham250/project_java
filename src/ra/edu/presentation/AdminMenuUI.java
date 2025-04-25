@@ -26,6 +26,7 @@ public class AdminMenuUI {
                     EnrollmentManager.menuEnrollmentManager(sc);
                     break;
                 case 4:
+                    StatisticUI.displayStatisticMenu(sc);
                     break;
                 case 5:
                     LoginUI.logout();

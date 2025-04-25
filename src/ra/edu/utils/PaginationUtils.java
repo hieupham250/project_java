@@ -1,11 +1,9 @@
 package ra.edu.utils;
 
-import ra.edu.business.model.Course;
-import ra.edu.business.model.RegisteredCourseInfo;
-import ra.edu.business.model.RegisteredStudentInfo;
-import ra.edu.business.model.Student;
+import ra.edu.business.model.*;
 import ra.edu.business.service.course.CourseService;
 import ra.edu.business.service.enrollment.EnrollmentService;
+import ra.edu.business.service.statistic.StatisticService;
 import ra.edu.business.service.student.StudentService;
 import ra.edu.datatype.PaginationOption;
 import ra.edu.validate.Validator;
@@ -83,7 +81,7 @@ public class PaginationUtils<T> {
                         totalPages = (int) Math.ceil((double) totalStudents / PAGE_SIZE);
                         data = studentService.getStudentsSorted(value, currentPage, PAGE_SIZE);
                         break;
-                    case COURSE_REGISTERED: // xem khóa học đã đăng ký của học viên
+                    case COURSE_REGISTERED: // xem khóa học đã đăng ký của học viên đang đăng nhập
                         int[] totalRegisteredOut = new int[1];
                         data = studentService.getMyRegisteredCourses(id, currentPage, PAGE_SIZE, totalRegisteredOut);
                         size = totalRegisteredOut[0];
@@ -106,15 +104,56 @@ public class PaginationUtils<T> {
                         System.out.println("\u001B[31mTùy chọn phân trang không hợp lệ!\u001B[0m");
                         return;
                 }
-            }
-            else {
+            } else if (service instanceof StatisticService) {
+                StatisticService statisticService = (StatisticService) service;
+                switch (option) {
+                    case LIST_ALL:
+                        int[] totalStudentCountOut = new int[1];
+                        data = statisticService.getStudentsCountByCourse(currentPage, PAGE_SIZE, totalStudentCountOut);
+                        int totalStudentCount = totalStudentCountOut[0];
+                        totalPages = (int) Math.ceil((double) totalStudentCount / PAGE_SIZE);
+                        break;
+                        case COURSE_MORE_THAN_10_STUDENTS:
+                            int[] totalCourseOver10Out = new int[1];
+                            data = statisticService.getCoursesWithMoreThan10Students(currentPage, PAGE_SIZE, totalCourseOver10Out);
+                            int totalCoursesOver10 = totalCourseOver10Out[0];
+                            totalPages = (int) Math.ceil((double) totalCoursesOver10 / PAGE_SIZE);
+                            break;
+                    default:
+                        System.out.println("\u001B[31mTùy chọn phân trang không hợp lệ!\u001B[0m");
+                        return;
+                }
+            } else {
                 System.out.println("\u001B[31mLoại dịch vụ không được hỗ trợ!\u001B[0m");
                 return;
             }
             if (data == null || data.isEmpty()) {
-                System.out.println("\u001B[31mKhông có dữ liệu để hiển thị!\u001B[0m");
+                switch (option) {
+                    case SEARCH:
+                        System.out.println("\u001B[31mKhông tìm thấy kết quả phù hợp!\u001B[0m");
+                        break;
+                    case LIST_ALL:
+                        System.out.println("\u001B[31mDanh sách hiện đang trống!\u001B[0m");
+                        break;
+                    case SORT:
+                        System.out.println("\u001B[31mKhông có dữ liệu để sắp xếp!\u001B[0m");
+                        break;
+                    case COURSE_REGISTERED:
+                        System.out.println("\u001B[31mBạn chưa đăng ký khóa học nào!\u001B[0m");
+                        break;
+                    case COURSE_STUDENT_REGISTERED:
+                        System.out.println("\u001B[31mKhông có học viên nào đăng ký khóa học này!\u001B[0m");
+                        break;
+                    case COURSE_MORE_THAN_10_STUDENTS:
+                        System.out.println("\u001B[31mKhông có khóa học nào có trên 10 học viên!\u001B[0m");
+                        break;
+                    default:
+                        System.out.println("\u001B[31mKhông có dữ liệu để hiển thị!\u001B[0m");
+                        break;
+                }
                 return;
             }
+
             System.out.printf("Danh sách (Trang %d / %d):\n", currentPage, totalPages);
             if (service instanceof CourseService) {
                 TableUtils.printCoursesTable((List<Course>) data);
@@ -129,6 +168,8 @@ public class PaginationUtils<T> {
                 }
             } else if (service instanceof EnrollmentService) {
                 TableUtils.printAdminRegStudentTable((List<RegisteredStudentInfo>) data);
+            } else if (service instanceof StatisticService) {
+                TableUtils.printCourseStatisticTable((List<Statistic>) data);
             }
             for (int i = 1; i <= totalPages; i++) {
                 if (i == currentPage) {

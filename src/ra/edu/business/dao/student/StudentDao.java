@@ -34,4 +34,6 @@ public interface StudentDao extends AppDao<Student> {
     public boolean registerCourse(int studentId, int courseId);
 
     public boolean cancelCourseRegistration(int studentId, int courseId);
+
+    boolean updatePassword(int studentId, String newPassword);
 }

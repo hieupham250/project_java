@@ -1,9 +1,6 @@
 package ra.edu.utils;
 
-import ra.edu.business.model.Course;
-import ra.edu.business.model.RegisteredCourseInfo;
-import ra.edu.business.model.RegisteredStudentInfo;
-import ra.edu.business.model.Student;
+import ra.edu.business.model.*;
 
 import java.util.List;
 
@@ -30,6 +27,12 @@ public class TableUtils {
     private static final String HEADER_REGISTERED_COURSE = String.format(
             "| %-12s | %-40s | %-19s | %-11s |",
             "Mã khóa học","Tên khóa học", "Ngày đăng ký", "Trạng thái"
+    );
+
+    private static final String LINE_COURSE_STATISTIC = "+--------------+------------------------------------------+--------------------------+";
+    private static final String HEADER_COURSE_STATISTIC = String.format(
+            "| %-12s | %-40s | %-24s |",
+            "Mã khóa học", "Tên khóa học", "Số lượng sinh viên"
     );
 
     public static void printCoursesTable(List<Course> courses) {
@@ -95,7 +98,6 @@ public class TableUtils {
         System.out.println(HEADER_REG_ADMIN_STUDENT_INFO);
         System.out.println(LINE_REG_ADMIN_STUDENT_INFO);
         for (RegisteredStudentInfo info : registeredStudents) {
-            System.out.println("CourseId: " + info.getCourseId());
             String statusDisplay = info.getStatus() != null ? info.getStatus().toVietnamese() : "N/A";
             System.out.printf("| %-10d | %-19s | %-26s | %-18s | %-10d | %-25s | %-19s | %-16s |\n",
                     info.getStudentId(),
@@ -124,6 +126,20 @@ public class TableUtils {
                     statusDisplay
             );
             System.out.println(LINE_REGISTERED_COURSE);
+        }
+    }
+
+    public static void printCourseStatisticTable(List<Statistic> statistics) {
+        System.out.println(LINE_COURSE_STATISTIC);
+        System.out.println(HEADER_COURSE_STATISTIC);
+        System.out.println(LINE_COURSE_STATISTIC);
+        for (Statistic stat : statistics) {
+            System.out.printf("| %-12d | %-40s | %-24d |\n",
+                    stat.getCourseId(),
+                    stat.getCourseName(),
+                    stat.getTotalStudents()
+            );
+            System.out.println(LINE_COURSE_STATISTIC);
         }
     }
 }

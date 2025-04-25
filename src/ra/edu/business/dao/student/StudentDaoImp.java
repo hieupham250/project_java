@@ -349,4 +349,23 @@ public class StudentDaoImp implements StudentDao{
         }
         return isCanceled;
     }
+
+    @Override
+    public boolean updatePassword(int studentId, String newPassword) {
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            cstmt = conn.prepareCall("{call update_password(?, ?)}");
+            cstmt.setInt(1, studentId);
+            cstmt.setString(2, newPassword);
+            int result = cstmt.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, cstmt);
+        }
+        return false;
+    }
 }

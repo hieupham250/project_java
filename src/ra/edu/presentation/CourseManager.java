@@ -98,7 +98,7 @@ public class CourseManager {
             switch (choice) {
                 case 1:
                     String newName = Validator.validateInputString("Nhập tên khóa học mới: ", sc, new StringRule(100, "Tên khóa học không được để trống!"));
-                    if (CourseValidator.isNameExisted(newName, courseService)) {
+                    if (!newName.equalsIgnoreCase(existingCourse.getName()) && CourseValidator.isNameExisted(newName, courseService)) {
                         System.out.println("\u001B[31mTên khóa học đã tồn tại. Vui lòng nhập tên khác!\u001B[0m");
                     } else {
                         existingCourse.setName(newName);

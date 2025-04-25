@@ -15,7 +15,7 @@ create table accounts
 
 insert into accounts (email, password, role)
 values ('admin@gmail.com', '123', 'admin'),
-       ('hieupt@gmail.com', '123456', 'student'),
+       ('ptrunghieu2507@gmail.com', '123456', 'student'),
        ('tranthib@gmail.com', '123456', 'student'),
        ('levanc@gmail.com', '123456', 'student'),
        ('phamthid@gmail.com', '123456', 'student'),
@@ -24,7 +24,8 @@ values ('admin@gmail.com', '123', 'admin'),
        ('tranvang@gmail.com', '123456', 'student'),
        ('dothih@gmail.com', '123456', 'student'),
        ('nguyenvani@gmail.com', '123456', 'student'),
-       ('lethij@gmail.com', '123456', 'student');
+       ('lethij@gmail.com', '123456', 'student'),
+       ('nguyenvana@gmail.com', '123456', 'student');
 
 create table students
 (
@@ -39,7 +40,7 @@ create table students
 );
 
 insert into students (name, dob, sex, phone, account_id, create_at)
-values ('Nguyễn Văn A', '2001-05-20', 1, '0901234567', 2, '2024-01-10'),
+values ('Phạm Trung Hếu', '2004-07-25', 1, '0901234567', 2, '2024-01-10'),
        ('Trần Thị B', '2000-11-15', 0, '0912345678', 3, '2024-01-12'),
        ('Lê Văn C', '2002-07-30', 1, '0923456789', 4, '2024-01-15'),
        ('Phạm Thị D', '1999-02-25', 0, '0934567890', 5, '2024-01-18'),
@@ -48,7 +49,8 @@ values ('Nguyễn Văn A', '2001-05-20', 1, '0901234567', 2, '2024-01-10'),
        ('Trần Văn G', '2000-12-12', 1, '0967890123', 8, '2024-01-25'),
        ('Đỗ Thị H', '2002-09-18', 0, '0978901234', 9, '2024-01-28'),
        ('Nguyễn Văn I', '2001-10-05', 1, '0989012345', 10, '2024-02-01'),
-       ('Lê Thị J', '2000-04-22', 0, '0990123456', 11, '2024-02-03');
+       ('Lê Thị J', '2000-04-22', 0, '0990123456', 11, '2024-02-03'),
+       ('Nguyễn Văn A', '2001-05-20', 1, '0901234567', 12, '2024-01-10');
 
 create table courses
 (
@@ -90,8 +92,38 @@ create table enrollments
 
 insert into enrollments (student_id, course_id, status)
 values (1, 1, 'CONFIRM'),
-       (2, 2, 'WAITING'),
+       (1, 2, 'CONFIRM'),
+       (1, 3, 'CONFIRM'),
+       (2, 1, 'CONFIRM'),
+       (2, 2, 'CONFIRM'),
+       (2, 3, 'CONFIRM'),
+       (3, 1, 'CONFIRM'),
+       (3, 2, 'CONFIRM'),
        (3, 3, 'CONFIRM'),
+       (4, 1, 'CONFIRM'),
+       (4, 2, 'CONFIRM'),
+       (4, 3, 'CONFIRM'),
+       (5, 1, 'CONFIRM'),
+       (5, 2, 'CONFIRM'),
+       (5, 3, 'CONFIRM'),
+       (6, 1, 'CONFIRM'),
+       (6, 2, 'CONFIRM'),
+       (6, 3, 'CONFIRM'),
+       (7, 1, 'CONFIRM'),
+       (7, 2, 'CONFIRM'),
+       (7, 3, 'CONFIRM'),
+       (8, 1, 'CONFIRM'),
+       (8, 2, 'CONFIRM'),
+       (8, 3, 'CONFIRM'),
+       (9, 1, 'CONFIRM'),
+       (9, 2, 'CONFIRM'),
+       (9, 3, 'CONFIRM'),
+       (10, 1, 'CONFIRM'),
+       (10, 2, 'CONFIRM'),
+       (10, 3, 'CONFIRM'),
+       (11, 1, 'CONFIRM'),
+       (11, 2, 'CONFIRM'),
+       (11, 3, 'CONFIRM'),
        (4, 4, 'CONFIRM'),
        (5, 5, 'CANCEL'),
        (6, 6, 'WAITING'),
@@ -467,11 +499,11 @@ from enrollments e
 where e.course_id = course_id_in;
 
 -- Truy vấn danh sách sinh viên đăng ký
-select s.id as studentId,
+select s.id   as studentId,
        s.name as nameStudent,
        a.email,
        s.phone,
-       c.id as courseId,
+       c.id   as courseId,
        c.name as nameCourse,
        e.registered_at,
        e.status
@@ -509,42 +541,85 @@ where student_id = student_id_in
   and status in ('DENIED', 'CANCEL');
 end;
 
--- chưa hoàn thành
-create procedure get_my_enrollments_sorted(
-    student_id_in int,
-    sort_option varchar(20),
-    page_size_in int,
-    offset_in int
+# thống kê
+create procedure get_total_courses_and_students(
+    OUT total_courses int,
+    OUT total_students int
 )
 begin
-    if lower(sort_option) = 'name_asc' then
-select c.name as course_name, e.registered_at, e.status
-from enrollments e
-         join courses c on e.course_id = c.id
-where e.student_id = student_id_in
-order by c.name asc
+select count(*) into total_courses from courses;
+select count(*) into total_students from students;
+end;
+
+create procedure get_students_count_by_course(
+    page_size_in int,
+    offset_in int,
+    OUT total_records_out int
+)
+begin
+    -- Đếm số lượng khóa học đã có học viên đăng ký (không trùng lặp)
+select count(distinct c.id)
+into total_records_out
+from courses c
+         left join enrollments e on c.id = e.course_id and e.status = 'CONFIRM';
+
+-- Lấy danh sách khóa học và số học viên đã đăng ký
+select c.id                as course_id,
+       c.name              as course_name,
+       count(e.student_id) as total_students
+from courses c
+         left join enrollments e on c.id = e.course_id and e.status = 'CONFIRM'
+group by c.id, c.name
+order by total_students desc
     limit page_size_in offset offset_in;
-elseif lower(sort_option) = 'name_desc' then
-select c.name as course_name, e.registered_at, e.status
-from enrollments e
-         join courses c on e.course_id = c.id
-where e.student_id = student_id_in
-order by c.name desc
+end;
+
+create procedure get_top_5_most_popular_courses()
+begin
+select c.id                as course_id,
+       c.name              as course_name,
+       count(e.student_id) as total_students
+from courses c
+         join enrollments e on c.id = e.course_id and e.status = 'CONFIRM'
+group by c.id, c.name
+order by total_students desc
+    limit 5;
+end;
+
+create procedure get_courses_with_more_than_10_students(
+    page_size_in int,
+    offset_in int,
+    OUT total_courses int
+)
+begin
+    -- Tính tổng số khóa học có hơn 10 sinh viên
+select count(*)
+into total_courses
+from (select c.id
+      from courses c
+               join enrollments e on c.id = e.course_id and e.status = 'CONFIRM'
+      group by c.id
+      having count(e.student_id) > 10) as sub;
+
+-- Trả về danh sách các khóa học với phân trang
+select c.id                as course_id,
+       c.name              as course_name,
+       count(e.student_id) as total_students
+from courses c
+         join enrollments e on c.id = e.course_id and e.status = 'CONFIRM'
+group by c.id, c.name
+having total_students > 10
+order by total_students desc
     limit page_size_in offset offset_in;
-elseif lower(sort_option) = 'registration_asc' then
-select c.name as course_name, e.registered_at, e.status
-from enrollments e
-         join courses c on e.course_id = c.id
-where e.student_id = student_id_in
-order by e.registered_at asc
-    limit page_size_in offset offset_in;
-elseif lower(sort_option) = 'registration_desc' then
-select c.name as course_name, e.registered_at, e.status
-from enrollments e
-         join courses c on e.course_id = c.id
-where e.student_id = student_id_in
-order by e.registered_at desc
-    limit page_size_in offset offset_in;
-end if;
+end;
+
+create procedure update_password(
+    acc_id_in int,
+    new_password_in varchar(255)
+)
+begin
+update accounts
+set password = new_password_in
+where id = acc_id_in;
 end;
 delimiter //
