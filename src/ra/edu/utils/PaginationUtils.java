@@ -43,8 +43,8 @@ public class PaginationUtils<T> {
                 switch (option) {
                     case LIST_ALL:
                         totalCourses = courseService.findAll().size();
-                        totalPages = (int) Math.ceil((double) totalCourses / PAGE_SIZE);
-                        data = courseService.getCoursesByPage(currentPage, PAGE_SIZE);
+                        totalPages = (int) Math.ceil((double) totalCourses / 10);
+                        data = courseService.getCoursesByPage(currentPage, 10);
                         break;
                     case SEARCH:
                         int[] totalRecordsOut = new int[1];

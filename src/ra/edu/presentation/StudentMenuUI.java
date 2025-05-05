@@ -99,7 +99,6 @@ public class StudentMenuUI {
 
         public static void changePassword(Scanner sc) {
             Account currentAccount = LoginUI.getLoggedInAccount();
-            String currentEmail = currentAccount.getEmail();
             String currentPassword = Validator.validateInputString("Nhập mật khẩu hiện tại: ", sc, new StringRule(255, "Không được để trống!"));
             String newPassword = Validator.validateInputString("Nhập mật khẩu mới: ", sc, new StringRule(255, "Không được để trống!"));
             String confirmPassword = Validator.validateInputString("Xác nhận mật khẩu mới: ", sc, new StringRule(255, "Không được để trống!"));

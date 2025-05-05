@@ -97,16 +97,21 @@ public class CourseManager {
             int choice = Validator.validateInputInteger("Nhập lựa chọn: ", sc);
             switch (choice) {
                 case 1:
-                    String newName = Validator.validateInputString("Nhập tên khóa học mới: ", sc, new StringRule(100, "Tên khóa học không được để trống!"));
-                    if (!newName.equalsIgnoreCase(existingCourse.getName()) && CourseValidator.isNameExisted(newName, courseService)) {
-                        System.out.println("\u001B[31mTên khóa học đã tồn tại. Vui lòng nhập tên khác!\u001B[0m");
-                    } else {
-                        existingCourse.setName(newName);
-                        if (courseService.update(existingCourse)) {
-                            System.out.println("\u001B[32mTên khóa học đã được cập nhật thành công!\u001B[0m");
+//                    String newName = Validator.validateInputString("Nhập tên khóa học mới: ", sc, new StringRule(100, "Tên khóa học không được để trống!"));
+                    String newName;
+                    while (true) {
+                        newName = Validator.validateInputString("Nhập tên khóa học mới: ", sc, new StringRule(100, "Tên khóa học không được để trống!"));
+                        if (!newName.equalsIgnoreCase(existingCourse.getName()) && CourseValidator.isNameExisted(newName, courseService)) {
+                            System.out.println("\u001B[31mTên khóa học đã tồn tại. Vui lòng nhập tên khác!\u001B[0m");
                         } else {
-                            System.out.println("\u001B[31mLỗi khi cập nhật tên khóa học!\u001B[0m");
+                            break;
                         }
+                    }
+                    existingCourse.setName(newName);
+                    if (courseService.update(existingCourse)) {
+                        System.out.println("\u001B[32mTên khóa học đã được cập nhật thành công!\u001B[0m");
+                    } else {
+                        System.out.println("\u001B[31mLỗi khi cập nhật tên khóa học!\u001B[0m");
                     }
                     break;
                 case 2:
